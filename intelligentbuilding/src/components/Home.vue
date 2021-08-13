@@ -1,11 +1,18 @@
 /* eslint-disable no-unused-vars */
 <template>
-  <div>
-    <el-tree :data="data" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
-             :props="defaultProps" @check="handleTreeNodeClick">
-    </el-tree>
-    <div id="container"></div>
-  </div>
+    <el-container>
+      <el-header>Header</el-header>
+      <el-container>
+        <el-main>
+          <div id="container"></div>
+        </el-main>
+        <el-aside width="200px">
+          <el-tree :data="data" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
+                   :props="defaultProps" @check="handleTreeNodeClick">
+          </el-tree>
+        </el-aside>
+      </el-container>
+    </el-container>
 </template>
 
 <script>
@@ -94,10 +101,14 @@ export default {
       if (floor_6.visible === context_6.visible) this.isLoaded_16 = floor_6.visible
       if (floor_1.visible && context_1.visible && floor_2.visible && context_2.visible &&
         floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
-        floor_5.visible && context_5.visible && floor_6.visible && context_6.visible) { this.isLoaded_1 = true }
+        floor_5.visible && context_5.visible && floor_6.visible && context_6.visible) {
+        this.isLoaded_1 = true
+      }
       if (!floor_1.visible && !context_1.visible && !floor_2.visible && !context_2.visible &&
         !floor_3.visible && !context_3.visible && !floor_4.visible && !context_4.visible &&
-        !floor_5.visible && !context_5.visible && !floor_6.visible && !context_6.visible) { this.isLoaded_1 = false }
+        !floor_5.visible && !context_5.visible && !floor_6.visible && !context_6.visible) {
+        this.isLoaded_1 = false
+      }
 
       // 加载和删除模型
       switch (data.id) {
@@ -450,8 +461,9 @@ export default {
 
 <style>
 #container {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  right: 0;
+  width: 85%;
+  height: 85%;
 }
 </style>
