@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 <template>
     <el-container>
       <el-header>Header</el-header>
@@ -103,10 +102,7 @@ export default {
         floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
         floor_5.visible && context_5.visible && floor_6.visible && context_6.visible) {
         this.isLoaded_1 = true
-      }
-      if (!floor_1.visible && !context_1.visible && !floor_2.visible && !context_2.visible &&
-        !floor_3.visible && !context_3.visible && !floor_4.visible && !context_4.visible &&
-        !floor_5.visible && !context_5.visible && !floor_6.visible && !context_6.visible) {
+      } else {
         this.isLoaded_1 = false
       }
 
