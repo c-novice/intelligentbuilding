@@ -129,8 +129,11 @@
         title: 'Volver'
       },
       popconfirm: {
-        confirmButtonText: 'Yes', // to be translated
-        cancelButtonText: 'No' // to be translated
+        confirmButtonText: 'Si',
+        cancelButtonText: 'No'
+      },
+      empty: {
+        description: 'Sin Datos'
       }
     }
   };

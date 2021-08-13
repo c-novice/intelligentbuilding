@@ -1,5 +1,8 @@
 <template>
   <div>
+    <el-tree :data="data" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
+             :props="defaultProps" @check="handleTreeNodeClick">
+    </el-tree>
     <div id="container"></div>
   </div>
 </template>
@@ -12,6 +15,46 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 export default {
   data () {
     return {
+      data: [{
+        id: 1,
+        label: '一级 1',
+        children: [{
+          id: 4,
+          label: '二级 1-1',
+          children: [{
+            id: 9,
+            label: '三级 1-1-1'
+          }, {
+            id: 10,
+            label: '三级 1-1-2'
+          }]
+        }]
+      }, {
+        id: 2,
+        label: '一级 2',
+        children: [{
+          id: 5,
+          label: '二级 2-1'
+        }, {
+          id: 6,
+          label: '二级 2-2'
+        }]
+      }, {
+        id: 3,
+        label: '一级 3',
+        children: [{
+          id: 7,
+          label: '二级 3-1'
+        }, {
+          id: 8,
+          label: '二级 3-2'
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      group1: null,
       camera: null,
       scene: null,
       renderer: null,
@@ -25,6 +68,34 @@ export default {
     this.animate()
   },
   methods: {
+    // 点击树节点事件处理
+    handleTreeNodeClick (data, node, elem) {
+      this.scene.remove(this.group1)
+      for (const sceneKey in this.scene) {
+        console.log(sceneKey)
+      }
+    },
+    getCheckedNodes () {
+      console.log(this.$refs.tree.getCheckedNodes())
+    },
+    getCheckedKeys () {
+      console.log(this.$refs.tree.getCheckedKeys())
+    },
+    setCheckedNodes () {
+      this.$refs.tree.setCheckedNodes([{
+        id: 5,
+        label: '二级 2-1'
+      }, {
+        id: 9,
+        label: '三级 1-1-1'
+      }])
+    },
+    setCheckedKeys () {
+      this.$refs.tree.setCheckedKeys([3])
+    },
+    resetChecked () {
+      this.$refs.tree.setCheckedKeys([])
+    },
     // 初始化
     init () {
       // 创建场景对象Scene
@@ -86,8 +157,8 @@ export default {
     },
     // 模型加载
     objectLoader (url) {
-      const gltfLoader = new GLTFLoader()
-      gltfLoader.load(url, (gltf) => {
+      this.gltfLoader = new GLTFLoader()
+      this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
         obj.position.y = 0
@@ -95,7 +166,9 @@ export default {
         obj.scale.x = 0.2
         obj.scale.y = 0.2
         obj.scale.z = 0.2
-        this.scene.add(obj)
+        this.group1 = new THREE.Group()
+        this.group1.add(obj)
+        this.scene.add(this.group1)
       })
     }
   }
