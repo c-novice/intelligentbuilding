@@ -12,6 +12,10 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
+let flag = false
+let scene = null
+let controls = null
+
 export default {
   data () {
     return {
@@ -54,13 +58,12 @@ export default {
         children: 'children',
         label: 'label'
       },
-      group1: null,
       camera: null,
-      scene: null,
       renderer: null,
       mesh: null,
-      controls: null,
-      clock: null
+      clock: null,
+      floor_4: null,
+      context_4: null
     }
   },
   mounted () {
@@ -70,9 +73,12 @@ export default {
   methods: {
     // 点击树节点事件处理
     handleTreeNodeClick (data, node, elem) {
-      this.scene.remove(this.group1)
-      for (const sceneKey in this.scene) {
-        console.log(sceneKey)
+      if (flag === false) {
+        scene.remove(this.floor_4)
+        flag = true
+      } else {
+        scene.add(this.floor_4)
+        flag = false
       }
     },
     getCheckedNodes () {
@@ -101,8 +107,8 @@ export default {
       // 创建场景对象Scene
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
-      this.scene = new THREE.Scene()
-      this.scene.background = new THREE.Color(0xbfd1e5)
+      scene = new THREE.Scene()
+      scene.background = new THREE.Color(0xbfd1e5)
 
       // 创建渲染器对象
       this.renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -125,10 +131,10 @@ export default {
       // 点光源
       let point = new THREE.PointLight(0xffffff)
       point.position.set(400, 200, 300) // 点光源位置
-      this.scene.add(point) // 点光源添加到场景中
+      scene.add(point) // 点光源添加到场景中
       // 环境光
       let ambient = new THREE.AmbientLight(0x444444)
-      this.scene.add(ambient)
+      scene.add(ambient)
 
       this.clock = new THREE.Clock()
       // onresize 事件会在窗口被调整大小时发生
@@ -143,21 +149,24 @@ export default {
         this.camera.updateProjectionMatrix()
       }
 
-      this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-      this.controls.target.set(5, 0, -10)
-      this.controls.update()
+      controls = new OrbitControls(this.camera, this.renderer.domElement)
+      controls.target.set(5, 0, -10)
+      controls.update()
 
       // 模型加载
-      this.objectLoader('/static/4楼墙体/4楼墙体.gltf')
+      this.objectLoader()
     },
     // 动画
     animate () {
       requestAnimationFrame(this.animate)
-      this.renderer.render(this.scene, this.camera)
+      this.renderer.render(scene, this.camera)
     },
     // 模型加载
-    objectLoader (url) {
+    objectLoader () {
       this.gltfLoader = new GLTFLoader()
+
+      let url
+      url = '/static/4楼墙体/4楼墙体.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
@@ -166,9 +175,24 @@ export default {
         obj.scale.x = 0.2
         obj.scale.y = 0.2
         obj.scale.z = 0.2
-        this.group1 = new THREE.Group()
-        this.group1.add(obj)
-        this.scene.add(this.group1)
+        // eslint-disable-next-line camelcase
+        this.floor_4 = new THREE.Group()
+        this.floor_4.add(obj)
+        scene.add(this.floor_4)
+      })
+      url = '/static/4楼桌椅/4楼桌椅.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        // eslint-disable-next-line camelcase
+        this.context_4 = new THREE.Group()
+        this.context_4.add(obj)
+        scene.add(this.context_4)
       })
     }
   }
