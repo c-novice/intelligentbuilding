@@ -12,58 +12,67 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-let flag = false
 let scene = null
 let controls = null
 
 export default {
   data () {
     return {
+      // 树形组件
       data: [{
         id: 1,
-        label: '一级 1',
-        children: [{
-          id: 4,
-          label: '二级 1-1',
-          children: [{
-            id: 9,
-            label: '三级 1-1-1'
-          }, {
-            id: 10,
-            label: '三级 1-1-2'
-          }]
-        }]
-      }, {
-        id: 2,
-        label: '一级 2',
-        children: [{
-          id: 5,
-          label: '二级 2-1'
-        }, {
-          id: 6,
-          label: '二级 2-2'
-        }]
-      }, {
-        id: 3,
-        label: '一级 3',
-        children: [{
-          id: 7,
-          label: '二级 3-1'
-        }, {
-          id: 8,
-          label: '二级 3-2'
-        }]
+        label: '计算机学院',
+        children: [
+          { id: 11, label: '1L', children: [{ id: 101, label: '1L墙体' }, { id: 102, label: '1L桌椅' }] },
+          { id: 12, label: '2L', children: [{ id: 103, label: '2L墙体' }, { id: 104, label: '2L桌椅' }] },
+          { id: 13, label: '3L', children: [{ id: 105, label: '3L墙体' }, { id: 106, label: '3L桌椅' }] },
+          { id: 14, label: '4L', children: [{ id: 107, label: '4L墙体' }, { id: 108, label: '4L桌椅' }] },
+          { id: 15, label: '5L', children: [{ id: 109, label: '5L墙体' }, { id: 110, label: '5L桌椅' }] },
+          { id: 16, label: '6L', children: [{ id: 111, label: '6L墙体' }, { id: 112, label: '6L桌椅' }] }
+        ]
       }],
       defaultProps: {
         children: 'children',
         label: 'label'
       },
+      // 场景组件
       camera: null,
       renderer: null,
       mesh: null,
       clock: null,
+      // 模型组件
+      floor_1: null,
+      floor_2: null,
+      floor_3: null,
       floor_4: null,
-      context_4: null
+      floor_5: null,
+      floor_6: null,
+      context_1: null,
+      context_2: null,
+      context_3: null,
+      context_4: null,
+      context_5: null,
+      context_6: null,
+      // 判断加载
+      isLoaded_1: false,
+      isLoaded_11: false,
+      isLoaded_12: false,
+      isLoaded_13: false,
+      isLoaded_14: false,
+      isLoaded_15: false,
+      isLoaded_16: false,
+      isLoaded_101: false,
+      isLoaded_102: false,
+      isLoaded_103: false,
+      isLoaded_104: false,
+      isLoaded_105: false,
+      isLoaded_106: false,
+      isLoaded_107: false,
+      isLoaded_108: false,
+      isLoaded_109: false,
+      isLoaded_110: false,
+      isLoaded_111: false,
+      isLoaded_112: false
     }
   },
   mounted () {
@@ -73,34 +82,213 @@ export default {
   methods: {
     // 点击树节点事件处理
     handleTreeNodeClick (data, node, elem) {
-      if (flag === false) {
-        scene.remove(this.floor_4)
-        flag = true
-      } else {
-        scene.add(this.floor_4)
-        flag = false
+      switch (data.id) {
+        case 1:
+          if (this.isLoaded_1 === true) {
+            this.isLoaded_1 = false
+            scene.remove(this.floor_1)
+            scene.remove(this.floor_2)
+            scene.remove(this.floor_3)
+            scene.remove(this.floor_4)
+            scene.remove(this.floor_5)
+            scene.remove(this.floor_6)
+            scene.remove(this.context_1)
+            scene.remove(this.context_2)
+            scene.remove(this.context_3)
+            scene.remove(this.context_4)
+            scene.remove(this.context_5)
+            scene.remove(this.context_6)
+          } else {
+            this.isLoaded_1 = true
+            scene.add(this.floor_1)
+            scene.add(this.floor_2)
+            scene.add(this.floor_3)
+            scene.add(this.floor_4)
+            scene.add(this.floor_5)
+            scene.add(this.floor_6)
+            scene.add(this.context_1)
+            scene.add(this.context_2)
+            scene.add(this.context_3)
+            scene.add(this.context_4)
+            scene.add(this.context_5)
+            scene.add(this.context_6)
+          }
+          break
+        case 11:
+          if (this.isLoaded_11 === true) {
+            this.isLoaded_11 = false
+            scene.remove(this.floor_1)
+            scene.remove(this.context_1)
+          } else {
+            this.isLoaded_11 = true
+            scene.add(this.floor_1)
+            scene.add(this.context_1)
+          }
+          break
+        case 12:
+          if (this.isLoaded_12 === true) {
+            this.isLoaded_12 = false
+            scene.remove(this.floor_2)
+            scene.remove(this.context_2)
+          } else {
+            this.isLoaded_12 = true
+            scene.add(this.floor_2)
+            scene.add(this.context_2)
+          }
+          break
+        case 13:
+          if (this.isLoaded_13 === true) {
+            this.isLoaded_13 = false
+            scene.remove(this.floor_3)
+            scene.remove(this.context_3)
+          } else {
+            this.isLoaded_13 = true
+            scene.add(this.floor_3)
+            scene.add(this.context_3)
+          }
+          break
+        case 14:
+          if (this.isLoaded_14 === true) {
+            this.isLoaded_14 = false
+            scene.remove(this.floor_4)
+            scene.remove(this.context_4)
+          } else {
+            this.isLoaded_14 = true
+            scene.add(this.floor_4)
+            scene.add(this.context_4)
+          }
+          break
+        case 15:
+          if (this.isLoaded_15 === true) {
+            this.isLoaded_15 = false
+            scene.remove(this.floor_5)
+            scene.remove(this.context_5)
+          } else {
+            this.isLoaded_15 = true
+            scene.add(this.floor_5)
+            scene.add(this.context_5)
+          }
+          break
+        case 16:
+          if (this.isLoaded_16 === true) {
+            this.isLoaded_16 = false
+            scene.remove(this.floor_6)
+            scene.remove(this.context_6)
+          } else {
+            this.isLoaded_16 = true
+            scene.add(this.floor_6)
+            scene.add(this.context_6)
+          }
+          break
+        case 101:
+          if (this.isLoaded_101 === true) {
+            this.isLoaded_101 = false
+            scene.remove(this.floor_1)
+          } else {
+            this.isLoaded_101 = true
+            scene.add(this.floor_1)
+          }
+          break
+        case 102:
+          if (this.isLoaded_102 === true) {
+            this.isLoaded_102 = false
+            scene.remove(this.context_1)
+          } else {
+            this.isLoaded_102 = true
+            scene.add(this.context_1)
+          }
+          break
+        case 103:
+          if (this.isLoaded_103 === true) {
+            this.isLoaded_103 = false
+            scene.remove(this.floor_2)
+          } else {
+            this.isLoaded_103 = true
+            scene.add(this.floor_2)
+          }
+          break
+        case 104:
+          if (this.isLoaded_104 === true) {
+            this.isLoaded_104 = false
+            scene.remove(this.context_2)
+          } else {
+            this.isLoaded_104 = true
+            scene.add(this.context_2)
+          }
+          break
+        case 105:
+          if (this.isLoaded_105 === true) {
+            this.isLoaded_105 = false
+            scene.remove(this.floor_3)
+          } else {
+            this.isLoaded_105 = true
+            scene.add(this.floor_5)
+          }
+          break
+        case 106:
+          if (this.isLoaded_106 === true) {
+            this.isLoaded_106 = false
+            scene.remove(this.context_3)
+          } else {
+            this.isLoaded_106 = true
+            scene.add(this.context_3)
+          }
+          break
+        case 107:
+          if (this.isLoaded_107 === true) {
+            this.isLoaded_107 = false
+            scene.remove(this.floor_4)
+          } else {
+            this.isLoaded_107 = true
+            scene.add(this.floor_4)
+          }
+          break
+        case 108:
+          if (this.isLoaded_108 === true) {
+            this.isLoaded_108 = false
+            scene.remove(this.context_4)
+          } else {
+            this.isLoaded_108 = true
+            scene.add(this.context_4)
+          }
+          break
+        case 109:
+          if (this.isLoaded_109 === true) {
+            this.isLoaded_109 = false
+            scene.remove(this.floor_5)
+          } else {
+            this.isLoaded_109 = true
+            scene.add(this.floor_5)
+          }
+          break
+        case 110:
+          if (this.isLoaded_110 === true) {
+            this.isLoaded_110 = false
+            scene.remove(this.context_5)
+          } else {
+            this.isLoaded_110 = true
+            scene.add(this.context_5)
+          }
+          break
+        case 111:
+          if (this.isLoaded_111 === true) {
+            this.isLoaded_111 = false
+            scene.remove(this.floor_6)
+          } else {
+            this.isLoaded_111 = true
+            scene.add(this.floor_6)
+          }
+          break
+        case 112:
+          if (this.isLoaded_112 === true) {
+            this.isLoaded_112 = false
+            scene.remove(this.context_6)
+          } else {
+            this.isLoaded_112 = true
+            scene.add(this.context_6)
+          }
+          break
       }
-    },
-    getCheckedNodes () {
-      console.log(this.$refs.tree.getCheckedNodes())
-    },
-    getCheckedKeys () {
-      console.log(this.$refs.tree.getCheckedKeys())
-    },
-    setCheckedNodes () {
-      this.$refs.tree.setCheckedNodes([{
-        id: 5,
-        label: '二级 2-1'
-      }, {
-        id: 9,
-        label: '三级 1-1-1'
-      }])
-    },
-    setCheckedKeys () {
-      this.$refs.tree.setCheckedKeys([3])
-    },
-    resetChecked () {
-      this.$refs.tree.setCheckedKeys([])
     },
     // 初始化
     init () {
@@ -166,6 +354,78 @@ export default {
       this.gltfLoader = new GLTFLoader()
 
       let url
+      url = '/static/1楼墙体/4楼墙体.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.floor_1 = new THREE.Group()
+        this.floor_1.add(obj)
+      })
+      url = '/static/1楼桌椅/1楼桌椅.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.context_1 = new THREE.Group()
+        this.context_1.add(obj)
+      })
+      url = '/static/2楼墙体/2楼墙体.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.floor_2 = new THREE.Group()
+        this.floor_2.add(obj)
+      })
+      url = '/static/2楼桌椅/2楼桌椅.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.context_2 = new THREE.Group()
+        this.context_2.add(obj)
+      })
+      url = '/static/3楼墙体/3楼墙体.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.floor_3 = new THREE.Group()
+        this.floor_3.add(obj)
+      })
+      url = '/static/3楼桌椅/3楼桌椅.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.context_3 = new THREE.Group()
+        this.context_3.add(obj)
+      })
       url = '/static/4楼墙体/4楼墙体.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
@@ -175,10 +435,8 @@ export default {
         obj.scale.x = 0.2
         obj.scale.y = 0.2
         obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
         this.floor_4 = new THREE.Group()
         this.floor_4.add(obj)
-        scene.add(this.floor_4)
       })
       url = '/static/4楼桌椅/4楼桌椅.gltf'
       this.gltfLoader.load(url, (gltf) => {
@@ -189,10 +447,56 @@ export default {
         obj.scale.x = 0.2
         obj.scale.y = 0.2
         obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
         this.context_4 = new THREE.Group()
         this.context_4.add(obj)
-        scene.add(this.context_4)
+      })
+      url = '/static/5楼墙体/5楼墙体.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.floor_5 = new THREE.Group()
+        this.floor_5.add(obj)
+      })
+      url = '/static/5楼桌椅/5楼桌椅.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.context_5 = new THREE.Group()
+        this.context_5.add(obj)
+      })
+      url = '/static/6楼墙体/6楼墙体.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.floor_6 = new THREE.Group()
+        this.floor_6.add(obj)
+      })
+      url = '/static/6楼桌椅/6楼桌椅.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.context_6 = new THREE.Group()
+        this.context_6.add(obj)
       })
     }
   }
