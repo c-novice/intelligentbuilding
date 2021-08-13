@@ -222,7 +222,7 @@ export default {
             scene.remove(this.floor_3)
           } else {
             this.isLoaded_105 = true
-            scene.add(this.floor_5)
+            scene.add(this.floor_3)
           }
           break
         case 106:
@@ -354,7 +354,7 @@ export default {
       this.gltfLoader = new GLTFLoader()
 
       let url
-      url = '/static/1楼墙体/4楼墙体.gltf'
+      url = '/static/1楼墙体/1楼墙体.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
@@ -366,7 +366,7 @@ export default {
         this.floor_1 = new THREE.Group()
         this.floor_1.add(obj)
       })
-      url = '/static/1楼桌椅/1楼桌椅.gltf'
+      url = '/static/1楼桌椅/1楼桌椅GITF.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
@@ -376,6 +376,28 @@ export default {
         obj.scale.y = 0.2
         obj.scale.z = 0.2
         this.context_1 = new THREE.Group()
+        this.context_1.add(obj)
+      })
+      url = '/static/1楼桌椅/1楼桌椅GITF_1.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
+        this.context_1.add(obj)
+      })
+      url = '/static/1楼桌椅/1楼桌椅GITF_2.gltf'
+      this.gltfLoader.load(url, (gltf) => {
+        const obj = gltf.scene
+        obj.position.x = 0
+        obj.position.y = 0
+        obj.position.z = 0
+        obj.scale.x = 0.2
+        obj.scale.y = 0.2
+        obj.scale.z = 0.2
         this.context_1.add(obj)
       })
       url = '/static/2楼墙体/2楼墙体.gltf'
@@ -414,7 +436,7 @@ export default {
         this.floor_3 = new THREE.Group()
         this.floor_3.add(obj)
       })
-      url = '/static/3楼桌椅/3楼桌椅.gltf'
+      url = '/static/3楼桌椅/3楼桌椅第2次.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
