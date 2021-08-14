@@ -5,7 +5,7 @@
         <el-main>
           <div id="container"></div>
         </el-main>
-        <el-aside width="200px">
+        <el-aside width="150px">
           <el-tree :data="data" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
                    :props="defaultProps" @check="handleTreeNodeClick">
           </el-tree>
@@ -92,12 +92,18 @@ export default {
     // 点击树节点事件处理
     handleTreeNodeClick (data, node, elem) {
       // 模拟tree加载情况
-      if (floor_1.visible === context_1.visible) this.isLoaded_11 = floor_1.visible
-      if (floor_2.visible === context_2.visible) this.isLoaded_12 = floor_2.visible
-      if (floor_3.visible === context_3.visible) this.isLoaded_13 = floor_3.visible
-      if (floor_4.visible === context_4.visible) this.isLoaded_14 = floor_4.visible
-      if (floor_5.visible === context_5.visible) this.isLoaded_15 = floor_5.visible
-      if (floor_6.visible === context_6.visible) this.isLoaded_16 = floor_6.visible
+      if (floor_1.visible && context_1.visible) this.isLoaded_11 = true
+      else this.isLoaded_11 = false
+      if (floor_2.visible && context_2.visible) this.isLoaded_12 = true
+      else this.isLoaded_12 = false
+      if (floor_3.visible && context_3.visible) this.isLoaded_13 = true
+      else this.isLoaded_13 = false
+      if (floor_4.visible && context_4.visible) this.isLoaded_14 = true
+      else this.isLoaded_14 = false
+      if (floor_5.visible && context_5.visible) this.isLoaded_15 = true
+      else this.isLoaded_15 = false
+      if (floor_6.visible && context_6.visible) this.isLoaded_16 = true
+      else this.isLoaded_16 = false
       if (floor_1.visible && context_1.visible && floor_2.visible && context_2.visible &&
         floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
         floor_5.visible && context_5.visible && floor_6.visible && context_6.visible) {
