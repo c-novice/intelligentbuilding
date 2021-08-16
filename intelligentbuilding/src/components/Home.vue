@@ -1,17 +1,17 @@
 <template>
-    <el-container>
-      <el-header>Header</el-header>
-      <el-container>
-        <el-main>
-          <div id="container"></div>
-        </el-main>
-        <el-aside width="150px">
-          <el-tree :data="data" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
-                   :props="defaultProps" @check="handleTreeNodeClick">
-          </el-tree>
-        </el-aside>
-      </el-container>
-    </el-container>
+  <el-container>
+    <el-main>
+      <div id="container"></div>
+    </el-main>
+    <el-aside width="150">
+      <el-tree :data="simpleData" show-checkbox default-expand-all node-key="id" ref="tree1" highlight-current
+               :props="defaultProps" @check="handleTreeNodeClick">
+      </el-tree>
+      <el-tree :data="detailData" show-checkbox default-expand-all node-key="id" ref="tree2" highlight-current
+               :props="defaultProps" @check="handleTreeNodeClick">
+      </el-tree>
+    </el-aside>
+  </el-container>
 </template>
 
 <script>
@@ -19,8 +19,11 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
+// 场景和控制器
 let scene = null
 let controls = null
+
+// 详细模型的楼板
 // eslint-disable-next-line camelcase
 let floor_1 = null
 // eslint-disable-next-line camelcase
@@ -34,6 +37,7 @@ let floor_5 = null
 // eslint-disable-next-line camelcase
 let floor_6 = null
 
+// 详细模型的桌椅
 // eslint-disable-next-line camelcase
 let context_1 = null
 // eslint-disable-next-line camelcase
@@ -51,9 +55,13 @@ export default {
   data () {
     return {
       // 树形组件
-      data: [{
+      simpleData: [{
+        id: 0,
+        label: '整体模型'
+      }],
+      detailData: [{
         id: 1,
-        label: '计算机学院',
+        label: '详细模型',
         children: [
           { id: 11, label: '1L', children: [{ id: 101, label: '1L墙体' }, { id: 102, label: '1L桌椅' }] },
           { id: 12, label: '2L', children: [{ id: 103, label: '2L墙体' }, { id: 104, label: '2L桌椅' }] },
@@ -75,6 +83,7 @@ export default {
       // 模型组件
 
       // 判断加载
+      isLoaded_0: false,
       isLoaded_1: false,
       isLoaded_11: false,
       isLoaded_12: false,
@@ -89,28 +98,48 @@ export default {
     this.animate()
   },
   methods: {
+    // 选择状态置空
+    resetChecked () {
+      this.$refs.tree1.setCheckedKeys([])
+      this.$refs.tree2.setCheckedKeys([])
+    },
+    setCheckedKeys (id) {
+      this.$refs.tree1.setCheckedKeys([id])
+      this.$refs.tree2.setCheckedKeys([id])
+    },
     // 点击树节点事件处理
-    handleTreeNodeClick (data, node, elem) {
+    handleTreeNodeClick (data, checked, deep) {
       // 模拟tree加载情况
-      if (floor_1.visible && context_1.visible) this.isLoaded_11 = true
-      else this.isLoaded_11 = false
-      if (floor_2.visible && context_2.visible) this.isLoaded_12 = true
-      else this.isLoaded_12 = false
-      if (floor_3.visible && context_3.visible) this.isLoaded_13 = true
-      else this.isLoaded_13 = false
-      if (floor_4.visible && context_4.visible) this.isLoaded_14 = true
-      else this.isLoaded_14 = false
-      if (floor_5.visible && context_5.visible) this.isLoaded_15 = true
-      else this.isLoaded_15 = false
-      if (floor_6.visible && context_6.visible) this.isLoaded_16 = true
-      else this.isLoaded_16 = false
-      if (floor_1.visible && context_1.visible && floor_2.visible && context_2.visible &&
-        floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
-        floor_5.visible && context_5.visible && floor_6.visible && context_6.visible) {
-        this.isLoaded_1 = true
+      if (data.id === 0) {
+        this.resetChecked()
+        if (!this.isLoaded_0) this.setCheckedKeys(0)
+        this.isLoaded_0 = !this.isLoaded_0
+        if (this.isLoaded_0) {
+          floor_1.visible = floor_2.visible = floor_3.visible = floor_4.visible = floor_5.visible = floor_6.visible = true
+          context_1.visible = context_2.visible = context_3.visible = context_4.visible = context_5.visible = context_6.visible = false
+        } else {
+          floor_1.visible = floor_2.visible = floor_3.visible = floor_4.visible = floor_5.visible = floor_6.visible = false
+          context_1.visible = context_2.visible = context_3.visible = context_4.visible = context_5.visible = context_6.visible = false
+        }
+        return
       } else {
-        this.isLoaded_1 = false
+        if (this.isLoaded_0) {
+          this.resetChecked()
+          this.isLoaded_0 = false
+          this.setCheckedKeys(data.id)
+          floor_1.visible = floor_2.visible = floor_3.visible = floor_4.visible = floor_5.visible = floor_6.visible = false
+          context_1.visible = context_2.visible = context_3.visible = context_4.visible = context_5.visible = context_6.visible = false
+        }
       }
+      this.isLoaded_11 = !!(floor_1.visible && context_1.visible)
+      this.isLoaded_12 = !!(floor_2.visible && context_2.visible)
+      this.isLoaded_13 = !!(floor_3.visible && context_3.visible)
+      this.isLoaded_14 = !!(floor_4.visible && context_4.visible)
+      this.isLoaded_15 = !!(floor_5.visible && context_5.visible)
+      this.isLoaded_16 = !!(floor_6.visible && context_6.visible)
+      this.isLoaded_1 = !!(floor_1.visible && context_1.visible && floor_2.visible && context_2.visible &&
+        floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
+        floor_5.visible && context_5.visible && floor_6.visible && context_6.visible)
 
       // 加载和删除模型
       switch (data.id) {
@@ -269,7 +298,7 @@ export default {
         scene.add(floor_1)
         floor_1.visible = false
       })
-      url = '/static/1楼桌椅/1楼桌椅GITF.gltf'
+      url = '/static/1楼桌椅/1楼桌椅.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
@@ -280,28 +309,6 @@ export default {
         obj.scale.z = 0.2
         // eslint-disable-next-line camelcase
         context_1 = new THREE.Group()
-        context_1.add(obj)
-      })
-      url = '/static/1楼桌椅/1楼桌椅GITF_1.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        context_1.add(obj)
-      })
-      url = '/static/1楼桌椅/1楼桌椅GITF_2.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
         context_1.add(obj)
         scene.add(context_1)
         context_1.visible = false
@@ -351,7 +358,7 @@ export default {
         scene.add(floor_3)
         floor_3.visible = false
       })
-      url = '/static/3楼桌椅/3楼桌椅第2次.gltf'
+      url = '/static/3楼桌椅/3楼桌椅.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
@@ -465,7 +472,11 @@ export default {
 #container {
   position: absolute;
   right: 0;
-  width: 85%;
-  height: 85%;
+  width: 80%;
+}
+
+el-container {
+  width: 100%;
+  height: 100%;
 }
 </style>
