@@ -22,6 +22,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // 场景和控制器
 let scene = null
 let controls = null
+let camera = null
 
 // 详细模型的楼板
 // eslint-disable-next-line camelcase
@@ -76,7 +77,6 @@ export default {
         label: 'label'
       },
       // 场景组件
-      camera: null,
       renderer: null,
       mesh: null,
       clock: null,
@@ -228,6 +228,11 @@ export default {
     },
     // 初始化
     init () {
+      function onMouseDblclick (event) {
+        console.log((event.clientX / window.innerWidth) * 2 - 1)
+        console.log(-(event.clientY / window.innerHeight) * 2 + 1)
+      }
+
       // 创建场景对象Scene
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
@@ -242,12 +247,12 @@ export default {
       const fov = 45
       const aspect = 2
       const near = 0.1
-      const far = 100
+      const far = 50
       this.container = document.getElementById('container')
-      this.camera = new THREE.PerspectiveCamera(
+      camera = new THREE.PerspectiveCamera(
         fov, aspect, near, far
       )
-      this.camera.position.set(15, 10, 20) // 设置相机位置
+      camera.position.set(20, 15, 20) // 设置相机位置
       // 光源设置
       // 点光源
       let point = new THREE.PointLight(0xffffff)
@@ -262,22 +267,30 @@ export default {
         // 重置渲染器输出画布canvas尺寸
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         // 全屏情况下：设置观察范围长宽比aspect为窗口宽高比
-        this.camera.aspect = window.innerWidth / window.innerHeight
+        camera.aspect = window.innerWidth / window.innerHeight
         // 渲染器执行render方法的时候会读取相机对象的投影矩阵属性projectionMatrix
         // 但是不会每渲染一帧，就通过相机的属性计算投影矩阵(节约计算资源)
         // 如果相机的一些属性发生了变化，需要执行updateProjectionMatrix ()方法更新相机的投影矩阵
-        this.camera.updateProjectionMatrix()
+        camera.updateProjectionMatrix()
       }
-      controls = new OrbitControls(this.camera, this.renderer.domElement)
+      controls = new OrbitControls(camera, this.renderer.domElement)
       controls.target.set(5, 0, -10)
       controls.update()
+
       // 模型加载
       this.objectLoader()
+
+      // 三维坐标系
+      const axesHelper = new THREE.AxesHelper(150)
+      // 和网格模型Mesh一样，AxesHelper你也可以理解为一个模型对象，需要插入到场景中
+      scene.add(axesHelper)
+      // 事件绑定
+      addEventListener('click', onMouseDblclick, false)
     },
     // 动画
     animate () {
       requestAnimationFrame(this.animate)
-      this.renderer.render(scene, this.camera)
+      this.renderer.render(scene, camera)
     },
     // 模型加载
     objectLoader () {
