@@ -18,6 +18,7 @@
 import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
 
 // 场景和控制器
 let scene = null
@@ -109,6 +110,31 @@ export default {
     },
     // 点击树节点事件处理
     handleTreeNodeClick (data, checked, deep) {
+      const option = {
+        px: camera.position.x,
+        pz: camera.position.z,
+        py: camera.position.y
+      }
+      const options2 = {
+        px: 25,
+        pz: 25,
+        py: 25
+      }
+      const tween = new TWEEN.Tween(option)
+        .to({
+          px: 7,
+          pz: 3,
+          py: 15
+        }, 10000).delay(3000)
+        .onUpdate(() => {
+          console.log(camera.position.x, camera.position.y, camera.position.z)
+          camera.position.x = options2.px
+          camera.position.z = options2.pz
+          camera.position.y = options2.py
+        })
+      tween.easing(TWEEN.Easing.Quadratic.Out)
+      tween.start()
+
       // 模拟tree加载情况
       if (data.id === 0) {
         this.resetChecked()
@@ -287,7 +313,7 @@ export default {
       // 事件绑定
       addEventListener('click', onMouseDblclick, false)
 
-      const material = new THREE.PointsMaterial({ color: '0xFF0000', size: '1' })
+      const material = new THREE.PointsMaterial({ color: '0xFF0000', size: '0.1' })
       const geometry = new THREE.BufferGeometry()
       const pointsArray = []
       pointsArray.push(new THREE.Vector3(10, 10, 10))
@@ -299,6 +325,7 @@ export default {
     },
     // 动画
     animate () {
+      TWEEN.update()
       requestAnimationFrame(this.animate)
       this.renderer.render(scene, camera)
     },
