@@ -286,6 +286,16 @@ export default {
       scene.add(axesHelper)
       // 事件绑定
       addEventListener('click', onMouseDblclick, false)
+
+      const material = new THREE.PointsMaterial({ color: '0xFF0000', size: '1' })
+      const geometry = new THREE.BufferGeometry()
+      const pointsArray = []
+      pointsArray.push(new THREE.Vector3(10, 10, 10))
+      pointsArray.push(new THREE.Vector3(12, 12, 12))
+      geometry.setFromPoints(pointsArray)
+      // 下述基本一样
+      const point1 = new THREE.Points(geometry, material)
+      scene.add(point1)
     },
     // 动画
     animate () {
