@@ -108,34 +108,56 @@ export default {
       this.$refs.tree1.setCheckedKeys([id])
       this.$refs.tree2.setCheckedKeys([id])
     },
-    // 点击树节点事件处理
-    handleTreeNodeClick (data, checked, deep) {
-      const option = {
+    demo () {
+      const tween1 = new TWEEN.Tween({
         px: camera.position.x,
         pz: camera.position.z,
         py: camera.position.y
-      }
-      // const options2 = {
-      //   px: 25,
-      //   pz: 25,
-      //   py: 25
-      // }
-      const tween = new TWEEN.Tween(option)
-      // eslint-disable-next-line no-unused-vars
-        .to({
-          px: 25,
-          pz: 25,
-          py: 25
-        }, 10000).delay(3000)
+      }).to({ px: 25, pz: 25, py: 25 }, 3000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
         })
-      tween.easing(TWEEN.Easing.Quadratic.Out)
-      tween.start()
+      tween1.easing(TWEEN.Easing.Quadratic.Out)
 
+      const tween2 = new TWEEN.Tween({ px: 25, pz: 25, py: 25 }).to({ px: 15, pz: 15, py: -15 }, 3000)
+        .onUpdate(function (object) {
+          console.log(object)
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+        })
+      tween2.easing(TWEEN.Easing.Quadratic.Out)
+
+      const tween3 = new TWEEN.Tween({ px: 15, pz: 15, py: -15 }).to({ px: -6, pz: 15, py: -15 }, 3000)
+        .onUpdate(function (object) {
+          console.log(object)
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+        })
+      tween3.easing(TWEEN.Easing.Quadratic.Out)
+
+      const tween4 = new TWEEN.Tween({ px: -6, pz: 15, py: -15 }).to({ px: 15, pz: 15, py: 15 }, 3000)
+        .onUpdate(function (object) {
+          console.log(object)
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+        })
+      tween4.easing(TWEEN.Easing.Quadratic.Out)
+
+      tween1.chain(tween2)
+      tween2.chain(tween3)
+      tween3.chain(tween4)
+      tween4.chain(tween1)
+      tween1.start()
+    },
+    // 点击树节点事件处理
+    handleTreeNodeClick (data, checked, deep) {
+      this.demo() // 调用处
       // 模拟tree加载情况
       if (data.id === 0) {
         this.resetChecked()
