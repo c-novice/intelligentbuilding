@@ -115,22 +115,23 @@ export default {
         pz: camera.position.z,
         py: camera.position.y
       }
-      const options2 = {
-        px: 25,
-        pz: 25,
-        py: 25
-      }
+      // const options2 = {
+      //   px: 25,
+      //   pz: 25,
+      //   py: 25
+      // }
       const tween = new TWEEN.Tween(option)
+      // eslint-disable-next-line no-unused-vars
         .to({
-          px: 7,
-          pz: 3,
-          py: 15
+          px: 25,
+          pz: 25,
+          py: 25
         }, 10000).delay(3000)
-        .onUpdate(() => {
-          console.log(camera.position.x, camera.position.y, camera.position.z)
-          camera.position.x = options2.px
-          camera.position.z = options2.pz
-          camera.position.y = options2.py
+        .onUpdate(function (object) {
+          console.log(object)
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
         })
       tween.easing(TWEEN.Easing.Quadratic.Out)
       tween.start()
@@ -278,7 +279,7 @@ export default {
       camera = new THREE.PerspectiveCamera(
         fov, aspect, near, far
       )
-      camera.position.set(20, 15, 20) // 设置相机位置
+      camera.position.set(15, 15, 15) // 设置相机位置
       // 光源设置
       // 点光源
       let point = new THREE.PointLight(0xffffff)
