@@ -3,7 +3,7 @@
     <el-main>
       <div id="container"></div>
     </el-main>
-    <el-aside width="150">
+    <el-aside width='150px'>
       <el-tree :data="simpleData" show-checkbox default-expand-all node-key="id" ref="tree1" highlight-current
                :props="defaultProps" @check="handleTreeNodeClick">
       </el-tree>
@@ -19,65 +19,75 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
+
 // 场景和控制器
 let scene = null
 let controls = null
 let camera = null
 // 详细模型的楼板
-// eslint-disable-next-line camelcase
-let floor_1 = null
-// eslint-disable-next-line camelcase
-let floor_2 = null
-// eslint-disable-next-line camelcase
-let floor_3 = null
-// eslint-disable-next-line camelcase
-let floor_4 = null
-// eslint-disable-next-line camelcase
-let floor_5 = null
-// eslint-disable-next-line camelcase
-let floor_6 = null
+let floor = new Array(10)
 // 详细模型的桌椅
-// eslint-disable-next-line camelcase
-let context_1 = null
-// eslint-disable-next-line camelcase
-let context_2 = null
-// eslint-disable-next-line camelcase
-let context_3 = null
-// eslint-disable-next-line camelcase
-let context_4 = null
-// eslint-disable-next-line camelcase
-let context_5 = null
-// eslint-disable-next-line camelcase
-let context_6 = null
+let context = new Array(10)
+// 漫游模式
+let tweens = new Array(100)
+let positions = new Array(100)
+// eslint-disable-next-line no-unused-vars
+let centers = new Array(10)
+
 export default {
   data () {
     return {
       // 树形组件
       simpleData: [{
         id: 0,
-        label: '整体模型'
+        label: '整体模型',
+        children: [{ id: 200, label: '整体漫游' }]
       }],
       detailData: [{
         id: 1,
         label: '详细模型',
         children: [
-          { id: 11, label: '1L', children: [{ id: 101, label: '1L墙体' }, { id: 102, label: '1L桌椅' }] },
-          { id: 12, label: '2L', children: [{ id: 103, label: '2L墙体' }, { id: 104, label: '2L桌椅' }] },
-          { id: 13, label: '3L', children: [{ id: 105, label: '3L墙体' }, { id: 106, label: '3L桌椅' }] },
-          { id: 14, label: '4L', children: [{ id: 107, label: '4L墙体' }, { id: 108, label: '4L桌椅' }] },
-          { id: 15, label: '5L', children: [{ id: 109, label: '5L墙体' }, { id: 110, label: '5L桌椅' }] },
-          { id: 16, label: '6L', children: [{ id: 111, label: '6L墙体' }, { id: 112, label: '6L桌椅' }] }
+          {
+            id: 11,
+            label: '1L',
+            children: [{ id: 101, label: '1L墙体' }, { id: 102, label: '1L桌椅' }, { id: 201, label: '1L漫游' }]
+          },
+          {
+            id: 12,
+            label: '2L',
+            children: [{ id: 103, label: '2L墙体' }, { id: 104, label: '2L桌椅' }, { id: 202, label: '2L漫游' }]
+          },
+          {
+            id: 13,
+            label: '3L',
+            children: [{ id: 105, label: '3L墙体' }, { id: 106, label: '3L桌椅' }, { id: 203, label: '3L漫游' }]
+          },
+          {
+            id: 14,
+            label: '4L',
+            children: [{ id: 107, label: '4L墙体' }, { id: 108, label: '4L桌椅' }, { id: 204, label: '4L漫游' }]
+          },
+          {
+            id: 15,
+            label: '5L',
+            children: [{ id: 109, label: '5L墙体' }, { id: 110, label: '5L桌椅' }, { id: 205, label: '5L漫游' }]
+          },
+          {
+            id: 16,
+            label: '6L',
+            children: [{ id: 111, label: '6L墙体' }, { id: 112, label: '6L桌椅' }, { id: 206, label: '6L漫游' }]
+          }
         ]
       }],
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label:
+          'label'
       },
       // 场景组件
       renderer: null,
       mesh: null,
       clock: null,
-      // 模型组件
       // 判断加载
       isLoaded_0: false,
       isLoaded_1: false,
@@ -86,7 +96,15 @@ export default {
       isLoaded_13: false,
       isLoaded_14: false,
       isLoaded_15: false,
-      isLoaded_16: false
+      isLoaded_16: false,
+      // 判断动画
+      isTween_0: false,
+      isTween_1: false,
+      isTween_2: false,
+      isTween_3: false,
+      isTween_4: false,
+      isTween_5: false,
+      isTween_6: false
     }
   },
   mounted () {
@@ -94,6 +112,10 @@ export default {
     this.animate()
   },
   methods: {
+    // 菜单的折叠与展开
+    toggleCollapse () {
+      this.isCollapse = !this.isCollapse
+    },
     // 选择状态置空
     resetChecked () {
       this.$refs.tree1.setCheckedKeys([])
@@ -103,77 +125,19 @@ export default {
       this.$refs.tree1.setCheckedKeys([id])
       this.$refs.tree2.setCheckedKeys([id])
     },
-    demo () {
-      const tween1 = new TWEEN.Tween({
-        px: camera.position.x,
-        pz: camera.position.z,
-        py: camera.position.y
-      }).to({ px: 20, pz: 15, py: 10 }, 2000)
-        .onUpdate(function (object) {
-          console.log(object)
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tween1.easing(TWEEN.Easing.Quadratic.Out)
-      const tween2 = new TWEEN.Tween({ px: 20, pz: 15, py: 10 }).to({ px: 25, pz: -22, py: 10 }, 6000)
-        .onUpdate(function (object) {
-          console.log(object)
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tween2.easing(TWEEN.Easing.Quadratic.Out)
-      const tween3 = new TWEEN.Tween({ px: 25, pz: -22, py: 10 }).to({ px: -13, pz: -22, py: 10 }, 6000)
-        .onUpdate(function (object) {
-          console.log(object)
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tween3.easing(TWEEN.Easing.Quadratic.Out)
-      const tween4 = new TWEEN.Tween({ px: -13, pz: -22, py: 10 }).to({ px: -16, pz: 10, py: 10 }, 6000)
-        .onUpdate(function (object) {
-          console.log(object)
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tween4.easing(TWEEN.Easing.Quadratic.Out)
-      const tween5 = new TWEEN.Tween({ px: -16, pz: 10, py: 10 }).to({ px: 20, pz: 15, py: 10 }, 6000)
-        .onUpdate(function (object) {
-          console.log(object)
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tween5.easing(TWEEN.Easing.Quadratic.Out)
-      tween1.chain(tween2)
-      tween2.chain(tween3)
-      tween3.chain(tween4)
-      tween4.chain(tween5)
-      tween5.chain(tween1)
-      tween1.start()
-    },
     // 点击树节点事件处理
-    handleTreeNodeClick (data, checked, deep) {
-      this.demo() // 调用处
+    handleTreeNodeClick (data) {
       // 模拟tree加载情况
       if (data.id === 0) {
         this.resetChecked()
         if (!this.isLoaded_0) this.setCheckedKeys(0)
         this.isLoaded_0 = !this.isLoaded_0
         if (this.isLoaded_0) {
-          floor_1.visible = floor_2.visible = floor_3.visible = floor_4.visible = floor_5.visible = floor_6.visible = true
-          context_1.visible = context_2.visible = context_3.visible = context_4.visible = context_5.visible = context_6.visible = false
+          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
+          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
         } else {
-          floor_1.visible = floor_2.visible = floor_3.visible = floor_4.visible = floor_5.visible = floor_6.visible = false
-          context_1.visible = context_2.visible = context_3.visible = context_4.visible = context_5.visible = context_6.visible = false
+          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
+          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
         }
         return
       } else {
@@ -181,110 +145,108 @@ export default {
           this.resetChecked()
           this.isLoaded_0 = false
           this.setCheckedKeys(data.id)
-          floor_1.visible = floor_2.visible = floor_3.visible = floor_4.visible = floor_5.visible = floor_6.visible = false
-          context_1.visible = context_2.visible = context_3.visible = context_4.visible = context_5.visible = context_6.visible = false
+          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
+          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
         }
       }
-      this.isLoaded_11 = !!(floor_1.visible && context_1.visible)
-      this.isLoaded_12 = !!(floor_2.visible && context_2.visible)
-      this.isLoaded_13 = !!(floor_3.visible && context_3.visible)
-      this.isLoaded_14 = !!(floor_4.visible && context_4.visible)
-      this.isLoaded_15 = !!(floor_5.visible && context_5.visible)
-      this.isLoaded_16 = !!(floor_6.visible && context_6.visible)
-      this.isLoaded_1 = !!(floor_1.visible && context_1.visible && floor_2.visible && context_2.visible &&
-        floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
-        floor_5.visible && context_5.visible && floor_6.visible && context_6.visible)
+      this.isLoaded_11 = !!(floor[1].visible && context[1].visible)
+      this.isLoaded_12 = !!(floor[2].visible && context[2].visible)
+      this.isLoaded_13 = !!(floor[3].visible && context[3].visible)
+      this.isLoaded_14 = !!(floor[4].visible && context[4].visible)
+      this.isLoaded_15 = !!(floor[5].visible && context[5].visible)
+      this.isLoaded_16 = !!(floor[6].visible && context[6].visible)
+      this.isLoaded_1 = !!(floor[1].visible && context[1].visible && floor[2].visible && context[2].visible &&
+        floor[3].visible && context[3].visible && floor[4].visible && context[4].visible &&
+        floor[5].visible && context[5].visible && floor[6].visible && context[6].visible)
       // 加载和删除模型
       switch (data.id) {
         case 1:
           this.isLoaded_1 = !this.isLoaded_1
-          floor_1.visible = this.isLoaded_1
-          context_1.visible = this.isLoaded_1
-          floor_2.visible = this.isLoaded_1
-          context_2.visible = this.isLoaded_1
-          floor_3.visible = this.isLoaded_1
-          context_3.visible = this.isLoaded_1
-          floor_4.visible = this.isLoaded_1
-          context_4.visible = this.isLoaded_1
-          floor_5.visible = this.isLoaded_1
-          context_5.visible = this.isLoaded_1
-          floor_6.visible = this.isLoaded_1
-          context_6.visible = this.isLoaded_1
+          floor[1].visible = this.isLoaded_1
+          context[1].visible = this.isLoaded_1
+          floor[2].visible = this.isLoaded_1
+          context[2].visible = this.isLoaded_1
+          floor[3].visible = this.isLoaded_1
+          context[3].visible = this.isLoaded_1
+          floor[4].visible = this.isLoaded_1
+          context[4].visible = this.isLoaded_1
+          floor[5].visible = this.isLoaded_1
+          context[5].visible = this.isLoaded_1
+          floor[6].visible = this.isLoaded_1
+          context[6].visible = this.isLoaded_1
           break
         case 11:
           this.isLoaded_11 = !this.isLoaded_11
-          floor_1.visible = this.isLoaded_11
-          context_1.visible = this.isLoaded_11
+          floor[1].visible = this.isLoaded_11
+          context[1].visible = this.isLoaded_11
           break
         case 12:
           this.isLoaded_12 = !this.isLoaded_12
-          floor_2.visible = this.isLoaded_12
-          context_2.visible = this.isLoaded_12
+          floor[2].visible = this.isLoaded_12
+          context[2].visible = this.isLoaded_12
           break
         case 13:
           this.isLoaded_13 = !this.isLoaded_13
-          floor_3.visible = this.isLoaded_13
-          context_3.visible = this.isLoaded_13
+          floor[3].visible = this.isLoaded_13
+          context[3].visible = this.isLoaded_13
           break
         case 14:
           this.isLoaded_14 = !this.isLoaded_14
-          floor_4.visible = this.isLoaded_14
-          context_4.visible = this.isLoaded_14
+          floor[4].visible = this.isLoaded_14
+          context[4].visible = this.isLoaded_14
           break
         case 15:
           this.isLoaded_15 = !this.isLoaded_15
-          floor_5.visible = this.isLoaded_15
-          context_5.visible = this.isLoaded_15
+          floor[5].visible = this.isLoaded_15
+          context[5].visible = this.isLoaded_15
           break
         case 16:
           this.isLoaded_16 = !this.isLoaded_16
-          floor_6.visible = this.isLoaded_16
-          context_6.visible = this.isLoaded_16
+          floor[6].visible = this.isLoaded_16
+          context[6].visible = this.isLoaded_16
           break
         case 101:
-          floor_1.visible = !floor_1.visible
+          floor[1].visible = !floor[1].visible
           break
         case 102:
-          context_1.visible = !context_1.visible
+          context[1].visible = !context[1].visible
           break
         case 103:
-          floor_2.visible = !floor_2.visible
+          floor[2].visible = !floor[2].visible
           break
         case 104:
-          context_2.visible = !context_2.visible
+          context[2].visible = !context[2].visible
           break
         case 105:
-          floor_3.visible = !floor_3.visible
+          floor[3].visible = !floor[3].visible
           break
         case 106:
-          context_3.visible = !context_3.visible
+          context[3].visible = !context[3].visible
           break
         case 107:
-          floor_4.visible = !floor_4.visible
+          floor[4].visible = !floor[4].visible
           break
         case 108:
-          context_4.visible = !context_4.visible
+          context[4].visible = !context[4].visible
           break
         case 109:
-          floor_5.visible = !floor_5.visible
+          floor[5].visible = !floor[5].visible
           break
         case 110:
-          context_5.visible = !context_5.visible
+          context[5].visible = !context[5].visible
           break
         case 111:
-          floor_6.visible = !floor_6.visible
+          floor[6].visible = !floor[6].visible
           break
         case 112:
-          context_6.visible = !context_6.visible
+          context[6].visible = !context[6].visible
           break
+        default:
+          this.tweenSolve(data.id)
       }
     },
     // 初始化
-    init () {
-      function onMouseDblclick (event) {
-        console.log((event.clientX / window.innerWidth) * 2 - 1)
-        console.log(-(event.clientY / window.innerHeight) * 2 + 1)
-      }
+    async init () {
       // 创建场景对象Scene
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
@@ -304,7 +266,7 @@ export default {
       camera = new THREE.PerspectiveCamera(
         fov, aspect, near, far
       )
-      camera.position.set(15, 15, 15) // 设置相机位置
+      camera.position.set(25, 15, 15) // 设置相机位置
       camera.lookAt(0, 0, 0)
       // 光源设置
       // 点光源
@@ -321,8 +283,6 @@ export default {
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         // 全屏情况下：设置观察范围长宽比aspect为窗口宽高比
         camera.aspect = window.innerWidth / window.innerHeight
-        // 渲染器执行render方法的时候会读取相机对象的投影矩阵属性projectionMatrix
-        // 但是不会每渲染一帧，就通过相机的属性计算投影矩阵(节约计算资源)
         // 如果相机的一些属性发生了变化，需要执行updateProjectionMatrix ()方法更新相机的投影矩阵
         camera.updateProjectionMatrix()
       }
@@ -330,34 +290,72 @@ export default {
       controls.target.set(5, 0, -10)
       controls.update()
       // 模型加载
-      this.objectLoader()
-      // 三维坐标系
-      const axesHelper = new THREE.AxesHelper(150)
-      // 和网格模型Mesh一样，AxesHelper你也可以理解为一个模型对象，需要插入到场景中
-      scene.add(axesHelper)
-      // 事件绑定
-      addEventListener('click', onMouseDblclick, false)
-      const material = new THREE.PointsMaterial({ color: '0xFF0000', size: '0.1' })
-      const geometry = new THREE.BufferGeometry()
-      const pointsArray = []
-      pointsArray.push(new THREE.Vector3(10, 10, 10))
-      pointsArray.push(new THREE.Vector3(12, 12, 12))
-      geometry.setFromPoints(pointsArray)
-      // 下述基本一样
-      const point1 = new THREE.Points(geometry, material)
-      scene.add(point1)
+      await this.objectLoader('./static/1楼墙体/1楼墙体.gltf', 'floor', 1)
+      await this.objectLoader('./static/2楼墙体/2楼墙体.gltf', 'floor', 2)
+      await this.objectLoader('./static/3楼墙体/3楼墙体.gltf', 'floor', 3)
+      await this.objectLoader('./static/4楼墙体/4楼墙体.gltf', 'floor', 4)
+      await this.objectLoader('./static/5楼墙体/5楼墙体.gltf', 'floor', 5)
+      await this.objectLoader('./static/6楼墙体/6楼墙体.gltf', 'floor', 6)
+      await this.objectLoader('./static/1楼桌椅/1楼桌椅.gltf', 'context', 1)
+      await this.objectLoader('./static/2楼桌椅/2楼桌椅.gltf', 'context', 2)
+      await this.objectLoader('./static/3楼桌椅/3楼桌椅.gltf', 'context', 3)
+      await this.objectLoader('./static/4楼桌椅/4楼桌椅.gltf', 'context', 4)
+      await this.objectLoader('./static/5楼桌椅/5楼桌椅.gltf', 'context', 5)
+      await this.objectLoader('./static/6楼桌椅/6楼桌椅.gltf', 'context', 6)
+      // 漫游数据
+      // 位置
+      positions[0] = { px: 20, py: 15, pz: 10 }
+      positions[1] = { px: 25, pz: -22, py: 10 }
+      positions[2] = { px: -13, pz: -22, py: 10 }
+      positions[3] = { px: -16, pz: 10, py: 10 }
+      // 中心
+      tweens[0] = new TWEEN.Tween(positions[0]).to(positions[1], 6000)
+        .onUpdate(function (object) {
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+          camera.lookAt(6.5, 2, -6)
+        })
+      tweens[0].easing(TWEEN.Easing.Quadratic.Out)
+      tweens[1] = new TWEEN.Tween(positions[1]).to(positions[2], 6000)
+        .onUpdate(function (object) {
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+          camera.lookAt(6.5, 2, -6)
+        })
+      tweens[1].easing(TWEEN.Easing.Quadratic.Out)
+      tweens[2] = new TWEEN.Tween(positions[2]).to(positions[3], 6000)
+        .onUpdate(function (object) {
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+          camera.lookAt(6.5, 2, -6)
+        })
+      tweens[2].easing(TWEEN.Easing.Quadratic.Out)
+      tweens[3] = new TWEEN.Tween(positions[3]).to(positions[0], 6000)
+        .onUpdate(function (object) {
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+          camera.lookAt(6.5, 2, -6)
+        })
+      tweens[3].easing(TWEEN.Easing.Quadratic.Out)
+      // 动画连接
+      tweens[0].chain(tweens[1])
+      tweens[1].chain(tweens[2])
+      tweens[2].chain(tweens[3])
+      tweens[3].chain(tweens[0])
     },
-    // 动画
+    // 更新
     animate () {
       TWEEN.update()
       requestAnimationFrame(this.animate)
       this.renderer.render(scene, camera)
     },
     // 模型加载
-    objectLoader () {
+    objectLoader (url, type, id) {
       this.gltfLoader = new GLTFLoader()
-      let url
-      url = '/static/1楼墙体/1楼墙体.gltf'
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
         obj.position.x = 0
@@ -367,176 +365,34 @@ export default {
         obj.scale.y = 0.2
         obj.scale.z = 0.2
         // eslint-disable-next-line camelcase
-        floor_1 = new THREE.Group()
-        floor_1.add(obj)
-        scene.add(floor_1)
-        floor_1.visible = false
+        if (type === 'floor') {
+          floor[id] = new THREE.Group()
+          floor[id].add(obj)
+          scene.add(floor[id])
+          floor[id].visible = false
+        } else if (type === 'context') {
+          context[id] = new THREE.Group()
+          context[id].add(obj)
+          scene.add(context[id])
+          context[id].visible = false
+        }
       })
-      url = '/static/1楼桌椅/1楼桌椅.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        context_1 = new THREE.Group()
-        context_1.add(obj)
-        scene.add(context_1)
-        context_1.visible = false
-      })
-      url = '/static/2楼墙体/2楼墙体.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        floor_2 = new THREE.Group()
-        floor_2.add(obj)
-        scene.add(floor_2)
-        floor_2.visible = false
-      })
-      url = '/static/2楼桌椅/2楼桌椅.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        context_2 = new THREE.Group()
-        context_2.add(obj)
-        scene.add(context_2)
-        context_2.visible = false
-      })
-      url = '/static/3楼墙体/3楼墙体.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        floor_3 = new THREE.Group()
-        floor_3.add(obj)
-        scene.add(floor_3)
-        floor_3.visible = false
-      })
-      url = '/static/3楼桌椅/3楼桌椅.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        context_3 = new THREE.Group()
-        context_3.add(obj)
-        scene.add(context_3)
-        context_3.visible = false
-      })
-      url = '/static/4楼墙体/4楼墙体.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        floor_4 = new THREE.Group()
-        floor_4.add(obj)
-        scene.add(floor_4)
-        floor_4.visible = false
-      })
-      url = '/static/4楼桌椅/4楼桌椅.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        context_4 = new THREE.Group()
-        context_4.add(obj)
-        scene.add(context_4)
-        context_4.visible = false
-      })
-      url = '/static/5楼墙体/5楼墙体.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        floor_5 = new THREE.Group()
-        floor_5.add(obj)
-        scene.add(floor_5)
-        floor_5.visible = false
-      })
-      url = '/static/5楼桌椅/5楼桌椅.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        context_5 = new THREE.Group()
-        context_5.add(obj)
-        scene.add(context_5)
-        context_5.visible = false
-      })
-      url = '/static/6楼墙体/6楼墙体.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        floor_6 = new THREE.Group()
-        floor_6.add(obj)
-        scene.add(floor_6)
-        floor_6.visible = false
-      })
-      url = '/static/6楼桌椅/6楼桌椅.gltf'
-      this.gltfLoader.load(url, (gltf) => {
-        const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
-        context_6 = new THREE.Group()
-        context_6.add(obj)
-        scene.add(context_6)
-        context_6.visible = false
-      })
+    },
+    // 动画处理
+    tweenSolve (id) {
+      floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
+      context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
+      switch (id) {
+        case 200:
+          this.isTween_0 = !this.isTween_0
+          if (this.isTween_0) {
+            floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
+            tweens[0].start()
+          } else {
+            tweens[0].stop()
+          }
+          break
+      }
     }
   }
 }
@@ -548,6 +404,7 @@ export default {
   right: 0;
   width: 80%;
 }
+
 el-container {
   width: 100%;
   height: 100%;
