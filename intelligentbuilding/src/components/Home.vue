@@ -19,12 +19,10 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
-
 // 场景和控制器
 let scene = null
 let controls = null
 let camera = null
-
 // 详细模型的楼板
 // eslint-disable-next-line camelcase
 let floor_1 = null
@@ -38,7 +36,6 @@ let floor_4 = null
 let floor_5 = null
 // eslint-disable-next-line camelcase
 let floor_6 = null
-
 // 详细模型的桌椅
 // eslint-disable-next-line camelcase
 let context_1 = null
@@ -52,7 +49,6 @@ let context_4 = null
 let context_5 = null
 // eslint-disable-next-line camelcase
 let context_6 = null
-
 export default {
   data () {
     return {
@@ -82,7 +78,6 @@ export default {
       mesh: null,
       clock: null,
       // 模型组件
-
       // 判断加载
       isLoaded_0: false,
       isLoaded_1: false,
@@ -113,50 +108,56 @@ export default {
         px: camera.position.x,
         pz: camera.position.z,
         py: camera.position.y
-      }).to({ px: 25, pz: -25, py: 25 }, 3000)
+      }).to({ px: 20, pz: 15, py: 10 }, 2000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
-          camera.lookAt(scene.position)
+          camera.lookAt(6.5, 2, -6)
         })
       tween1.easing(TWEEN.Easing.Quadratic.Out)
-
-      const tween2 = new TWEEN.Tween({ px: 25, pz: -25, py: 25 }).to({ px: -25, pz: -25, py: 25 }, 3000)
+      const tween2 = new TWEEN.Tween({ px: 20, pz: 15, py: 10 }).to({ px: 25, pz: -22, py: 10 }, 6000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
-          camera.lookAt(scene.position)
+          camera.lookAt(6.5, 2, -6)
         })
       tween2.easing(TWEEN.Easing.Quadratic.Out)
-
-      const tween3 = new TWEEN.Tween({ px: -25, pz: -25, py: 25 }).to({ px: -25, pz: 25, py: 25 }, 3000)
+      const tween3 = new TWEEN.Tween({ px: 25, pz: -22, py: 10 }).to({ px: -13, pz: -22, py: 10 }, 6000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
-          camera.lookAt(scene.position)
+          camera.lookAt(6.5, 2, -6)
         })
       tween3.easing(TWEEN.Easing.Quadratic.Out)
-
-      const tween4 = new TWEEN.Tween({ px: -25, pz: 25, py: 25 }).to({ px: 25, pz: 25, py: 25 }, 3000)
+      const tween4 = new TWEEN.Tween({ px: -13, pz: -22, py: 10 }).to({ px: -16, pz: 10, py: 10 }, 6000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
-          camera.lookAt(scene.position)
+          camera.lookAt(6.5, 2, -6)
         })
       tween4.easing(TWEEN.Easing.Quadratic.Out)
-
+      const tween5 = new TWEEN.Tween({ px: -16, pz: 10, py: 10 }).to({ px: 20, pz: 15, py: 10 }, 6000)
+        .onUpdate(function (object) {
+          console.log(object)
+          camera.position.x = object.px
+          camera.position.z = object.pz
+          camera.position.y = object.py
+          camera.lookAt(6.5, 2, -6)
+        })
+      tween5.easing(TWEEN.Easing.Quadratic.Out)
       tween1.chain(tween2)
       tween2.chain(tween3)
       tween3.chain(tween4)
-      tween4.chain(tween1)
+      tween4.chain(tween5)
+      tween5.chain(tween1)
       tween1.start()
     },
     // 点击树节点事件处理
@@ -193,7 +194,6 @@ export default {
       this.isLoaded_1 = !!(floor_1.visible && context_1.visible && floor_2.visible && context_2.visible &&
         floor_3.visible && context_3.visible && floor_4.visible && context_4.visible &&
         floor_5.visible && context_5.visible && floor_6.visible && context_6.visible)
-
       // 加载和删除模型
       switch (data.id) {
         case 1:
@@ -285,7 +285,6 @@ export default {
         console.log((event.clientX / window.innerWidth) * 2 - 1)
         console.log(-(event.clientY / window.innerHeight) * 2 + 1)
       }
-
       // 创建场景对象Scene
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
@@ -305,7 +304,8 @@ export default {
       camera = new THREE.PerspectiveCamera(
         fov, aspect, near, far
       )
-      camera.position.set(25, 25, 25) // 设置相机位置
+      camera.position.set(15, 15, 15) // 设置相机位置
+      camera.lookAt(0, 0, 0)
       // 光源设置
       // 点光源
       let point = new THREE.PointLight(0xffffff)
@@ -327,19 +327,16 @@ export default {
         camera.updateProjectionMatrix()
       }
       controls = new OrbitControls(camera, this.renderer.domElement)
-      controls.target.set(0, 0, 0)
+      controls.target.set(5, 0, -10)
       controls.update()
-
       // 模型加载
       this.objectLoader()
-
       // 三维坐标系
       const axesHelper = new THREE.AxesHelper(150)
       // 和网格模型Mesh一样，AxesHelper你也可以理解为一个模型对象，需要插入到场景中
       scene.add(axesHelper)
       // 事件绑定
       addEventListener('click', onMouseDblclick, false)
-
       const material = new THREE.PointsMaterial({ color: '0xFF0000', size: '0.1' })
       const geometry = new THREE.BufferGeometry()
       const pointsArray = []
@@ -353,12 +350,6 @@ export default {
     // 动画
     animate () {
       TWEEN.update()
-      // eslint-disable-next-line camelcase
-      if (floor_1 != null) {
-        floor_1.position.x = 0
-        floor_1.position.y = 0
-        floor_1.position.z = 0
-      }
       requestAnimationFrame(this.animate)
       this.renderer.render(scene, camera)
     },
@@ -557,7 +548,6 @@ export default {
   right: 0;
   width: 80%;
 }
-
 el-container {
   width: 100%;
   height: 100%;
