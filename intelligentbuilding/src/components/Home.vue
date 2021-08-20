@@ -113,39 +113,43 @@ export default {
         px: camera.position.x,
         pz: camera.position.z,
         py: camera.position.y
-      }).to({ px: 25, pz: 25, py: 25 }, 3000)
+      }).to({ px: 25, pz: -25, py: 25 }, 3000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
+          camera.lookAt(scene.position)
         })
       tween1.easing(TWEEN.Easing.Quadratic.Out)
 
-      const tween2 = new TWEEN.Tween({ px: 25, pz: 25, py: 25 }).to({ px: 15, pz: 15, py: -15 }, 3000)
+      const tween2 = new TWEEN.Tween({ px: 25, pz: -25, py: 25 }).to({ px: -25, pz: -25, py: 25 }, 3000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
+          camera.lookAt(scene.position)
         })
       tween2.easing(TWEEN.Easing.Quadratic.Out)
 
-      const tween3 = new TWEEN.Tween({ px: 15, pz: 15, py: -15 }).to({ px: -6, pz: 15, py: -15 }, 3000)
+      const tween3 = new TWEEN.Tween({ px: -25, pz: -25, py: 25 }).to({ px: -25, pz: 25, py: 25 }, 3000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
+          camera.lookAt(scene.position)
         })
       tween3.easing(TWEEN.Easing.Quadratic.Out)
 
-      const tween4 = new TWEEN.Tween({ px: -6, pz: 15, py: -15 }).to({ px: 15, pz: 15, py: 15 }, 3000)
+      const tween4 = new TWEEN.Tween({ px: -25, pz: 25, py: 25 }).to({ px: 25, pz: 25, py: 25 }, 3000)
         .onUpdate(function (object) {
           console.log(object)
           camera.position.x = object.px
           camera.position.z = object.pz
           camera.position.y = object.py
+          camera.lookAt(scene.position)
         })
       tween4.easing(TWEEN.Easing.Quadratic.Out)
 
@@ -301,7 +305,7 @@ export default {
       camera = new THREE.PerspectiveCamera(
         fov, aspect, near, far
       )
-      camera.position.set(15, 15, 15) // 设置相机位置
+      camera.position.set(25, 25, 25) // 设置相机位置
       // 光源设置
       // 点光源
       let point = new THREE.PointLight(0xffffff)
@@ -323,7 +327,7 @@ export default {
         camera.updateProjectionMatrix()
       }
       controls = new OrbitControls(camera, this.renderer.domElement)
-      controls.target.set(5, 0, -10)
+      controls.target.set(0, 0, 0)
       controls.update()
 
       // 模型加载
@@ -349,6 +353,12 @@ export default {
     // 动画
     animate () {
       TWEEN.update()
+      // eslint-disable-next-line camelcase
+      if (floor_1 != null) {
+        floor_1.position.x = 0
+        floor_1.position.y = 0
+        floor_1.position.z = 0
+      }
       requestAnimationFrame(this.animate)
       this.renderer.render(scene, camera)
     },
