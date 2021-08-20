@@ -290,62 +290,68 @@ export default {
       controls.target.set(5, 0, -10)
       controls.update()
       // 模型加载
-      await this.objectLoader('./static/1楼墙体/1楼墙体.gltf', 'floor', 1)
-      await this.objectLoader('./static/2楼墙体/2楼墙体.gltf', 'floor', 2)
-      await this.objectLoader('./static/3楼墙体/3楼墙体.gltf', 'floor', 3)
-      await this.objectLoader('./static/4楼墙体/4楼墙体.gltf', 'floor', 4)
-      await this.objectLoader('./static/5楼墙体/5楼墙体.gltf', 'floor', 5)
-      await this.objectLoader('./static/6楼墙体/6楼墙体.gltf', 'floor', 6)
-      await this.objectLoader('./static/1楼桌椅/1楼桌椅.gltf', 'context', 1)
-      await this.objectLoader('./static/2楼桌椅/2楼桌椅.gltf', 'context', 2)
-      await this.objectLoader('./static/3楼桌椅/3楼桌椅.gltf', 'context', 3)
-      await this.objectLoader('./static/4楼桌椅/4楼桌椅.gltf', 'context', 4)
-      await this.objectLoader('./static/5楼桌椅/5楼桌椅.gltf', 'context', 5)
-      await this.objectLoader('./static/6楼桌椅/6楼桌椅.gltf', 'context', 6)
+      this.objectLoader('./static/1楼墙体/1楼墙体.gltf', 'floor', 1)
+      this.objectLoader('./static/2楼墙体/2楼墙体.gltf', 'floor', 2)
+      this.objectLoader('./static/3楼墙体/3楼墙体.gltf', 'floor', 3)
+      this.objectLoader('./static/4楼墙体/4楼墙体.gltf', 'floor', 4)
+      this.objectLoader('./static/5楼墙体/5楼墙体.gltf', 'floor', 5)
+      this.objectLoader('./static/6楼墙体/6楼墙体.gltf', 'floor', 6)
+      this.objectLoader('./static/1楼桌椅/1楼桌椅.gltf', 'context', 1)
+      this.objectLoader('./static/2楼桌椅/2楼桌椅.gltf', 'context', 2)
+      this.objectLoader('./static/3楼桌椅/3楼桌椅.gltf', 'context', 3)
+      this.objectLoader('./static/4楼桌椅/4楼桌椅.gltf', 'context', 4)
+      this.objectLoader('./static/5楼桌椅/5楼桌椅.gltf', 'context', 5)
+      this.objectLoader('./static/6楼桌椅/6楼桌椅.gltf', 'context', 6)
+      console.log('load successfully')
       // 漫游数据
       // 位置
+      // 整体
       positions[0] = { px: 20, py: 15, pz: 10 }
       positions[1] = { px: 25, pz: -22, py: 10 }
       positions[2] = { px: -13, pz: -22, py: 10 }
       positions[3] = { px: -16, pz: 10, py: 10 }
-      // 中心
-      tweens[0] = new TWEEN.Tween(positions[0]).to(positions[1], 6000)
-        .onUpdate(function (object) {
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tweens[0].easing(TWEEN.Easing.Quadratic.Out)
-      tweens[1] = new TWEEN.Tween(positions[1]).to(positions[2], 6000)
-        .onUpdate(function (object) {
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tweens[1].easing(TWEEN.Easing.Quadratic.Out)
-      tweens[2] = new TWEEN.Tween(positions[2]).to(positions[3], 6000)
-        .onUpdate(function (object) {
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tweens[2].easing(TWEEN.Easing.Quadratic.Out)
-      tweens[3] = new TWEEN.Tween(positions[3]).to(positions[0], 6000)
-        .onUpdate(function (object) {
-          camera.position.x = object.px
-          camera.position.z = object.pz
-          camera.position.y = object.py
-          camera.lookAt(6.5, 2, -6)
-        })
-      tweens[3].easing(TWEEN.Easing.Quadratic.Out)
-      // 动画连接
-      tweens[0].chain(tweens[1])
-      tweens[1].chain(tweens[2])
-      tweens[2].chain(tweens[3])
-      tweens[3].chain(tweens[0])
+      // 1L
+      positions[4] = { px: 20, py: 15, pz: 10 }
+      positions[5] = { px: 25, pz: -22, py: 10 }
+      positions[6] = { px: -13, pz: -22, py: 10 }
+      positions[7] = { px: -16, pz: 10, py: 10 }
+      // 2L
+      positions[8] = { px: 20, py: 15, pz: 10 }
+      positions[9] = { px: 25, pz: -22, py: 10 }
+      positions[10] = { px: -13, pz: -22, py: 10 }
+      positions[11] = { px: -16, pz: 10, py: 10 }
+      // 3L
+      positions[12] = { px: 20, py: 15, pz: 10 }
+      positions[13] = { px: 25, pz: -22, py: 10 }
+      positions[14] = { px: -13, pz: -22, py: 10 }
+      positions[15] = { px: -16, pz: 10, py: 10 }
+      // 4L
+      positions[16] = { px: 20, py: 15, pz: 10 }
+      positions[17] = { px: 25, pz: -22, py: 10 }
+      positions[18] = { px: -13, pz: -22, py: 10 }
+      positions[19] = { px: -16, pz: 10, py: 10 }
+      // 5L
+      positions[20] = { px: 20, py: 15, pz: 10 }
+      positions[21] = { px: 25, pz: -22, py: 10 }
+      positions[22] = { px: -13, pz: -22, py: 10 }
+      positions[23] = { px: -16, pz: 10, py: 10 }
+      // 6L
+      positions[24] = { px: 20, py: 15, pz: 10 }
+      positions[25] = { px: 25, pz: -22, py: 10 }
+      positions[26] = { px: -13, pz: -22, py: 10 }
+      positions[27] = { px: -16, pz: 10, py: 10 }
+      // 动画
+      for (let i = 0; i <= 27; ++i) {
+        tweens[i] = new TWEEN.Tween(positions[i]).to(positions[(i + 1) % 4 === 0 ? i - 3 : i + 1], 6000)
+          .onUpdate(function (object) {
+            camera.position.x = object.px
+            camera.position.z = object.pz
+            camera.position.y = object.py
+            camera.lookAt(6.5, 2, -6)
+          })
+        tweens[i].easing(TWEEN.Easing.Quadratic.Out)
+      }
+      for (let i = 0; i <= 27; ++i) { tweens[i].chain(tweens[(i + 1) % 4 === 0 ? i - 3 : i + 1]) }
     },
     // 更新
     animate () {
@@ -386,10 +392,66 @@ export default {
         case 200:
           this.isTween_0 = !this.isTween_0
           if (this.isTween_0) {
+            console.log(tweens[0])
             floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
             tweens[0].start()
+            console.log('why')
           } else {
             tweens[0].stop()
+          }
+          break
+        case 201:
+          this.isTween_1 = !this.isTween_1
+          if (this.isTween_1) {
+            floor[1].visible = context[1].visible = true
+            tweens[4].start()
+          } else {
+            tweens[4].stop()
+          }
+          break
+        case 202:
+          this.isTween_2 = !this.isTween_2
+          if (this.isTween_2) {
+            floor[2].visible = context[2].visible = true
+            tweens[8].start()
+          } else {
+            tweens[8].stop()
+          }
+          break
+        case 203:
+          this.isTween_3 = !this.isTween_3
+          if (this.isTween_3) {
+            floor[3].visible = context[3].visible = true
+            tweens[12].start()
+          } else {
+            tweens[12].stop()
+          }
+          break
+        case 204:
+          this.isTween_4 = !this.isTween_4
+          if (this.isTween_4) {
+            floor[4].visible = context[4].visible = true
+            tweens[16].start()
+          } else {
+            tweens[16].stop()
+          }
+          break
+        case 205:
+          this.isTween_5 = !this.isTween_5
+          if (this.isTween_5) {
+            floor[5].visible = context[5].visible = true
+            tweens[20].start()
+          } else {
+            tweens[20].stop()
+          }
+          break
+        case 206:
+          this.isTween_6 = !this.isTween_6
+          if (this.isTween_6) {
+            floor[6].visible = context[6].visible = true
+            tweens[24].start()
+          } else {
+            tweens[24].stop()
           }
           break
       }
