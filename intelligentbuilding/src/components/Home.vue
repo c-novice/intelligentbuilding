@@ -162,48 +162,32 @@ export default {
       switch (data.id) {
         case 1:
           this.isLoaded_1 = !this.isLoaded_1
-          floor[1].visible = this.isLoaded_1
-          context[1].visible = this.isLoaded_1
-          floor[2].visible = this.isLoaded_1
-          context[2].visible = this.isLoaded_1
-          floor[3].visible = this.isLoaded_1
-          context[3].visible = this.isLoaded_1
-          floor[4].visible = this.isLoaded_1
-          context[4].visible = this.isLoaded_1
-          floor[5].visible = this.isLoaded_1
-          context[5].visible = this.isLoaded_1
-          floor[6].visible = this.isLoaded_1
-          context[6].visible = this.isLoaded_1
+          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = this.isLoaded_1
+          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = this.isLoaded_1
           break
         case 11:
           this.isLoaded_11 = !this.isLoaded_11
-          floor[1].visible = this.isLoaded_11
-          context[1].visible = this.isLoaded_11
+          floor[1].visible = context[1].visible = this.isLoaded_11
           break
         case 12:
           this.isLoaded_12 = !this.isLoaded_12
-          floor[2].visible = this.isLoaded_12
-          context[2].visible = this.isLoaded_12
+          floor[2].visible = context[2].visible = this.isLoaded_12
           break
         case 13:
           this.isLoaded_13 = !this.isLoaded_13
-          floor[3].visible = this.isLoaded_13
-          context[3].visible = this.isLoaded_13
+          floor[3].visible = context[3].visible = this.isLoaded_13
           break
         case 14:
           this.isLoaded_14 = !this.isLoaded_14
-          floor[4].visible = this.isLoaded_14
-          context[4].visible = this.isLoaded_14
+          floor[4].visible = context[4].visible = this.isLoaded_14
           break
         case 15:
           this.isLoaded_15 = !this.isLoaded_15
-          floor[5].visible = this.isLoaded_15
-          context[5].visible = this.isLoaded_15
+          floor[5].visible = context[5].visible = this.isLoaded_15
           break
         case 16:
           this.isLoaded_16 = !this.isLoaded_16
-          floor[6].visible = this.isLoaded_16
-          context[6].visible = this.isLoaded_16
+          floor[6].visible = context[6].visible = this.isLoaded_16
           break
         case 101:
           floor[1].visible = !floor[1].visible
@@ -242,7 +226,7 @@ export default {
           context[6].visible = !context[6].visible
           break
         default:
-          this.tweenSolve(data.id)
+          this.tweenSolve(data.id) // 动画
       }
     },
     // 初始化
@@ -351,7 +335,9 @@ export default {
           })
         tweens[i].easing(TWEEN.Easing.Quadratic.Out)
       }
-      for (let i = 0; i <= 27; ++i) { tweens[i].chain(tweens[(i + 1) % 4 === 0 ? i - 3 : i + 1]) }
+      for (let i = 0; i <= 27; ++i) {
+        tweens[i].chain(tweens[(i + 1) % 4 === 0 ? i - 3 : i + 1])
+      }
     },
     // 更新
     animate () {
