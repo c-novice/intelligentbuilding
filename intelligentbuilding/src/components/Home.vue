@@ -230,7 +230,7 @@ export default {
       }
     },
     // 初始化
-    async init () {
+    init () {
       // 创建场景对象Scene
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
@@ -326,7 +326,7 @@ export default {
       positions[27] = { px: -16, pz: 10, py: 10 }
       // 动画
       for (let i = 0; i <= 27; ++i) {
-        tweens[i] = new TWEEN.Tween(positions[i]).to(positions[(i + 1) % 4 === 0 ? i - 3 : i + 1], 6000)
+        tweens[i] = new TWEEN.Tween(positions[i]).to(positions[(i + 1) % 4 === 0 ? i - 3 : i + 1], 5500)
           .onUpdate(function (object) {
             camera.position.x = object.px
             camera.position.z = object.pz
@@ -384,6 +384,9 @@ export default {
             console.log('why')
           } else {
             tweens[0].stop()
+            tweens[1].stop()
+            tweens[2].stop()
+            tweens[3].stop()
           }
           break
         case 201:
@@ -393,6 +396,9 @@ export default {
             tweens[4].start()
           } else {
             tweens[4].stop()
+            tweens[5].stop()
+            tweens[6].stop()
+            tweens[7].stop()
           }
           break
         case 202:
@@ -402,6 +408,9 @@ export default {
             tweens[8].start()
           } else {
             tweens[8].stop()
+            tweens[9].stop()
+            tweens[10].stop()
+            tweens[11].stop()
           }
           break
         case 203:
@@ -411,6 +420,9 @@ export default {
             tweens[12].start()
           } else {
             tweens[12].stop()
+            tweens[13].stop()
+            tweens[14].stop()
+            tweens[15].stop()
           }
           break
         case 204:
@@ -420,6 +432,9 @@ export default {
             tweens[16].start()
           } else {
             tweens[16].stop()
+            tweens[17].stop()
+            tweens[18].stop()
+            tweens[19].stop()
           }
           break
         case 205:
@@ -429,6 +444,9 @@ export default {
             tweens[20].start()
           } else {
             tweens[20].stop()
+            tweens[21].stop()
+            tweens[22].stop()
+            tweens[23].stop()
           }
           break
         case 206:
@@ -438,6 +456,9 @@ export default {
             tweens[24].start()
           } else {
             tweens[24].stop()
+            tweens[25].stop()
+            tweens[26].stop()
+            tweens[27].stop()
           }
           break
       }
