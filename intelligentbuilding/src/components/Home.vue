@@ -19,7 +19,6 @@ import * as THREE from 'three/build/three.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min'
-
 // 场景和控制器
 let scene = null
 let controls = null
@@ -33,7 +32,6 @@ let tweens = new Array(100)
 let positions = new Array(100)
 // eslint-disable-next-line no-unused-vars
 let centers = new Array(10)
-
 export default {
   data () {
     return {
@@ -286,41 +284,40 @@ export default {
       this.objectLoader('./static/4楼桌椅/4楼桌椅.gltf', 'context', 4)
       this.objectLoader('./static/5楼桌椅/5楼桌椅.gltf', 'context', 5)
       this.objectLoader('./static/6楼桌椅/6楼桌椅.gltf', 'context', 6)
-      console.log('load successfully')
       // 漫游数据
       // 位置
       // 整体
-      positions[0] = { px: 20, py: 15, pz: 10 }
+      positions[0] = { px: 20, py: 10, pz: 10 }
       positions[1] = { px: 25, pz: -22, py: 10 }
       positions[2] = { px: -13, pz: -22, py: 10 }
       positions[3] = { px: -16, pz: 10, py: 10 }
       // 1L
-      positions[4] = { px: 20, py: 15, pz: 10 }
-      positions[5] = { px: 25, pz: -22, py: 10 }
-      positions[6] = { px: -13, pz: -22, py: 10 }
-      positions[7] = { px: -16, pz: 10, py: 10 }
+      positions[4] = { px: 20, py: 5, pz: 10 }
+      positions[5] = { px: 25, pz: -22, py: 5 }
+      positions[6] = { px: -13, pz: -22, py: 5 }
+      positions[7] = { px: -16, pz: 10, py: 5 }
       // 2L
-      positions[8] = { px: 20, py: 15, pz: 10 }
-      positions[9] = { px: 25, pz: -22, py: 10 }
-      positions[10] = { px: -13, pz: -22, py: 10 }
-      positions[11] = { px: -16, pz: 10, py: 10 }
+      positions[8] = { px: 20, py: 6, pz: 10 }
+      positions[9] = { px: 25, pz: -22, py: 6 }
+      positions[10] = { px: -13, pz: -22, py: 6 }
+      positions[11] = { px: -16, pz: 10, py: 6 }
       // 3L
-      positions[12] = { px: 20, py: 15, pz: 10 }
-      positions[13] = { px: 25, pz: -22, py: 10 }
-      positions[14] = { px: -13, pz: -22, py: 10 }
-      positions[15] = { px: -16, pz: 10, py: 10 }
+      positions[12] = { px: 20, py: 7, pz: 10 }
+      positions[13] = { px: 25, pz: -22, py: 7 }
+      positions[14] = { px: -13, pz: -22, py: 7 }
+      positions[15] = { px: -16, pz: 10, py: 7 }
       // 4L
-      positions[16] = { px: 20, py: 15, pz: 10 }
-      positions[17] = { px: 25, pz: -22, py: 10 }
-      positions[18] = { px: -13, pz: -22, py: 10 }
-      positions[19] = { px: -16, pz: 10, py: 10 }
+      positions[16] = { px: 20, py: 8, pz: 10 }
+      positions[17] = { px: 25, pz: -22, py: 8 }
+      positions[18] = { px: -13, pz: -22, py: 8 }
+      positions[19] = { px: -16, pz: 10, py: 8 }
       // 5L
-      positions[20] = { px: 20, py: 15, pz: 10 }
-      positions[21] = { px: 25, pz: -22, py: 10 }
-      positions[22] = { px: -13, pz: -22, py: 10 }
-      positions[23] = { px: -16, pz: 10, py: 10 }
+      positions[20] = { px: 20, py: 9, pz: 10 }
+      positions[21] = { px: 25, pz: -22, py: 9 }
+      positions[22] = { px: -13, pz: -22, py: 9 }
+      positions[23] = { px: -16, pz: 10, py: 9 }
       // 6L
-      positions[24] = { px: 20, py: 15, pz: 10 }
+      positions[24] = { px: 20, py: 10, pz: 10 }
       positions[25] = { px: 25, pz: -22, py: 10 }
       positions[26] = { px: -13, pz: -22, py: 10 }
       positions[27] = { px: -16, pz: 10, py: 10 }
@@ -331,7 +328,21 @@ export default {
             camera.position.x = object.px
             camera.position.z = object.pz
             camera.position.y = object.py
-            camera.lookAt(6.5, 2, -6)
+            if (i >= 0 && i <= 3) {
+              camera.lookAt(6.5, 1, -6)
+            } else if (i >= 4 && i <= 7) {
+              camera.lookAt(6.5, 2, -6)
+            } else if (i >= 8 && i <= 11) {
+              camera.lookAt(6.5, 2, -6)
+            } else if (i >= 12 && i <= 15) {
+              camera.lookAt(6.5, 3, -6)
+            } else if (i >= 16 && i <= 19) {
+              camera.lookAt(6.5, 4, -6)
+            } else if (i >= 20 && i <= 23) {
+              camera.lookAt(6.5, 4, -6)
+            } else if (i >= 24 && i <= 27) {
+              camera.lookAt(6.5, 5, -6)
+            }
           })
         tweens[i].easing(TWEEN.Easing.Quadratic.Out)
       }
@@ -378,10 +389,8 @@ export default {
         case 200:
           this.isTween_0 = !this.isTween_0
           if (this.isTween_0) {
-            console.log(tweens[0])
             floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
             tweens[0].start()
-            console.log('why')
           } else {
             tweens[0].stop()
             tweens[1].stop()
