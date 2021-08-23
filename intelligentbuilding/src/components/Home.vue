@@ -1,8 +1,10 @@
 <template>
   <el-container>
     <el-aside>
-      <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" " @change="roamingChange"></el-switch>
-      <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" " @change="patrolChange"></el-switch>
+      <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" "
+                 @change="roamingChange"></el-switch>
+      <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" "
+                 @change="patrolChange"></el-switch>
       <br><br>
       <el-tree :data="simpleData" show-checkbox default-expand-all node-key="id" ref="tree1" highlight-current
                :props="defaultProps" @check="handleTreeNodeClick">
@@ -37,6 +39,8 @@ let positions = new Array(1000)
 export default {
   data () {
     return {
+      // 树形组件控制
+      ableTree: false,
       // 漫游与巡视按钮
       ableRoaming: false,
       switchRoaming: false,
@@ -54,7 +58,8 @@ export default {
           { id: 14, label: '4L', children: [{ id: 107, label: '4L墙体' }, { id: 108, label: '4L桌椅' }] },
           { id: 15, label: '5L', children: [{ id: 109, label: '5L墙体' }, { id: 110, label: '5L桌椅' }] },
           { id: 16, label: '6L', children: [{ id: 111, label: '6L墙体' }, { id: 112, label: '6L桌椅' }] }
-        ]
+        ],
+        disabled: this.ableTree
       }],
       defaultProps: {
         children: 'children',
@@ -76,8 +81,11 @@ export default {
   methods: {
     // 漫游
     roamingChange (state) {
-      this.switchRoaming = !this.switchRoaming
+      this.switchRoaming = !!this.switchRoaming
       if (state) { // 执行漫游
+        // 设置禁用关系
+        this.ablePatrol = false
+        this.ableTree = true
         // 获取当前的选中楼层
         let checked = null
         if (this.isLoaded[0]) {
@@ -95,51 +103,37 @@ export default {
         else {
           tweens[checked % 10 * 10].start()
           // 监控鼠标单击
-          let cur = 0
-          document.onclick = function () {
-            // eslint-disable-next-line eqeqeq
+          let cur = 1
+          document.onclick = () => {
+            if (!this.switchRoaming) return
+            cur = (cur + 1) % 2
             if (cur === 0) {
-              cur = cur + 1
-              alert('点击确定开始漫游')
+              // 提示进入漫游
+              this.$message.success('您已进入漫游模式，点击触摸屏会暂停15s')
+              tweens[checked % 10 * 10].start()
             } else if (cur === 1) {
-              cur = 2
-              let myVar = setInterval(go, 1000)
-              // 超时15秒
               let count = 0
-              let outTime = 4
-              // eslint-disable-next-line no-inner-declarations
-              function go () {
+              let myVar = setInterval(() => {
                 count++
-                // eslint-disable-next-line eqeqeq
-                if (count === outTime) {
+                if (count === 4) {
                   tweens[checked % 10 * 10].start()
                   clearInterval(myVar)
-                  cur = 1
+                  cur = 0
                 }
-              }
-              let x, y
-              // 监听鼠标
-              document.onmousemove = function (event) {
-                const x1 = event.clientX
-                const y1 = event.clientY
-                if (x !== x1 || y !== y1) {
-                  count = 0
-                }
-                x = x1
-                y = y1
-              }
+              }, 1000)
               for (let i = 0; i < 70; ++i) {
-                tweens[i].stop()
+                if (tweens[i] != null) tweens[i].stop()
               }
-            } else {
-              cur = 1
-              tweens[checked % 10 * 10].start()
             }
           }
         }
       } else { // 停止漫游
+        this.$message.success('您已退出漫游模式')
+        // 解除禁用关系
+        this.ablePatrol = true
+        this.ableTree = false
         for (let i = 0; i < 70; ++i) {
-          tweens[i].stop()
+          if (tweens[i] != null) tweens[i].stop()
         }
       }
     },
@@ -177,6 +171,14 @@ export default {
     },
     // 点击树节点事件处理
     handleTreeNodeClick (data) {
+      // 强制退出漫游和巡视模式
+      if (this.switchRoaming) {
+        this.roamingChange(false)
+        this.switchRoaming = false
+      } else if (this.switchPatrol) {
+        this.patrolChange(false)
+        this.switchPatrol = false
+      }
       // 模拟tree加载情况
       // 模型加载模块
       if (data.id === 0) { // 整体模型
@@ -367,62 +369,75 @@ export default {
       positions[2] = { px: -13, pz: -22, py: 10 }
       positions[3] = { px: -16, pz: 10, py: 10 }
       // 1L
-      positions[4] = { px: 20, py: 5, pz: 10 }
-      positions[5] = { px: 25, pz: -22, py: 5 }
-      positions[6] = { px: -13, pz: -22, py: 5 }
-      positions[7] = { px: -16, pz: 10, py: 5 }
+      positions[10] = { px: 20, py: 5, pz: 10 }
+      positions[11] = { px: 25, pz: -22, py: 5 }
+      positions[12] = { px: -13, pz: -22, py: 5 }
+      positions[13] = { px: -16, pz: 10, py: 5 }
       // 2L
-      positions[8] = { px: 20, py: 6, pz: 10 }
-      positions[9] = { px: 25, pz: -22, py: 6 }
-      positions[10] = { px: -13, pz: -22, py: 6 }
-      positions[11] = { px: -16, pz: 10, py: 6 }
+      positions[20] = { px: 20, py: 6, pz: 10 }
+      positions[21] = { px: 25, pz: -22, py: 6 }
+      positions[22] = { px: -13, pz: -22, py: 6 }
+      positions[23] = { px: -16, pz: 10, py: 6 }
       // 3L
-      positions[12] = { px: 20, py: 7, pz: 10 }
-      positions[13] = { px: 25, pz: -22, py: 7 }
-      positions[14] = { px: -13, pz: -22, py: 7 }
-      positions[15] = { px: -16, pz: 10, py: 7 }
+      positions[30] = { px: 20, py: 7, pz: 10 }
+      positions[31] = { px: 25, pz: -22, py: 7 }
+      positions[32] = { px: -13, pz: -22, py: 7 }
+      positions[33] = { px: -16, pz: 10, py: 7 }
       // 4L
-      positions[16] = { px: 20, py: 8, pz: 10 }
-      positions[17] = { px: 25, pz: -22, py: 8 }
-      positions[18] = { px: -13, pz: -22, py: 8 }
-      positions[19] = { px: -16, pz: 10, py: 8 }
+      positions[40] = { px: 20, py: 8, pz: 10 }
+      positions[41] = { px: 25, pz: -22, py: 8 }
+      positions[42] = { px: -13, pz: -22, py: 8 }
+      positions[43] = { px: -16, pz: 10, py: 8 }
       // 5L
-      positions[20] = { px: 20, py: 9, pz: 10 }
-      positions[21] = { px: 25, pz: -22, py: 9 }
-      positions[22] = { px: -13, pz: -22, py: 9 }
-      positions[23] = { px: -16, pz: 10, py: 9 }
+      positions[50] = { px: 20, py: 9, pz: 10 }
+      positions[51] = { px: 25, pz: -22, py: 9 }
+      positions[52] = { px: -13, pz: -22, py: 9 }
+      positions[53] = { px: -16, pz: 10, py: 9 }
       // 6L
-      positions[24] = { px: 20, py: 10, pz: 10 }
-      positions[25] = { px: 25, pz: -22, py: 10 }
-      positions[26] = { px: -13, pz: -22, py: 10 }
-      positions[27] = { px: -16, pz: 10, py: 10 }
+      positions[60] = { px: 20, py: 10, pz: 10 }
+      positions[61] = { px: 25, pz: -22, py: 10 }
+      positions[62] = { px: -13, pz: -22, py: 10 }
+      positions[63] = { px: -16, pz: 10, py: 10 }
       // 动画
-      for (let i = 0; i <= 27; ++i) {
-        tweens[i] = new TWEEN.Tween(positions[i]).to(positions[(i + 1) % 4 === 0 ? i - 3 : i + 1], 5500)
-          .onUpdate(function (object) {
-            camera.position.x = object.px
-            camera.position.z = object.pz
-            camera.position.y = object.py
-            if (i >= 0 && i <= 3) {
-              camera.lookAt(6.5, 1, -6)
-            } else if (i >= 4 && i <= 7) {
-              camera.lookAt(6.5, 2, -6)
-            } else if (i >= 8 && i <= 11) {
-              camera.lookAt(6.5, 2, -6)
-            } else if (i >= 12 && i <= 15) {
-              camera.lookAt(6.5, 3, -6)
-            } else if (i >= 16 && i <= 19) {
-              camera.lookAt(6.5, 4, -6)
-            } else if (i >= 20 && i <= 23) {
-              camera.lookAt(6.5, 4, -6)
-            } else if (i >= 24 && i <= 27) {
-              camera.lookAt(6.5, 5, -6)
-            }
-          })
-        tweens[i].easing(TWEEN.Easing.Quadratic.Out)
+      for (let i = 0; i <= 6; ++i) {
+        for (let j = 0; j <= 3; ++j) {
+          tweens[i * 10 + j] = new TWEEN.Tween(positions[i * 10 + j]).to(positions[(j + 1) % 4 === 0 ? i * 10 + j - 3 : i * 10 + j + 1], 5500)
+            .onUpdate(function (object) {
+              camera.position.x = object.px
+              camera.position.z = object.pz
+              camera.position.y = object.py
+              switch (i) {
+                case 0:
+                  camera.lookAt(6.5, 1, -6)
+                  break
+                case 1:
+                  camera.lookAt(6.5, 2, -6)
+                  break
+                case 2:
+                  camera.lookAt(6.5, 2, -6)
+                  break
+                case 3:
+                  camera.lookAt(6.5, 3, -6)
+                  break
+                case 4:
+                  camera.lookAt(6.5, 4, -6)
+                  break
+                case 5:
+                  camera.lookAt(6.5, 4, -6)
+                  break
+                case 6:
+                  camera.lookAt(6.5, 5, -6)
+                  break
+              }
+            })
+          tweens[i * 10 + j].easing(TWEEN.Easing.Quadratic.Out)
+        }
       }
-      for (let i = 0; i <= 27; ++i) {
-        tweens[i].chain(tweens[(i + 1) % 4 === 0 ? i - 3 : i + 1])
+      // 连接
+      for (let i = 0; i <= 6; ++i) {
+        for (let j = 0; j <= 3; ++j) {
+          tweens[i * 10 + j].chain(tweens[(j + 1) % 4 === 0 ? i * 10 + j - 3 : i * 10 + j + 1])
+        }
       }
     },
     // 更新
