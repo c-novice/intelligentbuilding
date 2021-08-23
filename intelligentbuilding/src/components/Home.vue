@@ -1,9 +1,9 @@
 <template>
   <el-container>
-    <el-main>
-      <div id="container"></div>
-    </el-main>
-    <el-aside width='150px'>
+    <el-aside>
+      <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" " @change="roamingChange"></el-switch>
+      <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" " @change="patrolChange"></el-switch>
+      <br><br>
       <el-tree :data="simpleData" show-checkbox default-expand-all node-key="id" ref="tree1" highlight-current
                :props="defaultProps" @check="handleTreeNodeClick">
       </el-tree>
@@ -11,6 +11,9 @@
                :props="defaultProps" @check="handleTreeNodeClick">
       </el-tree>
     </el-aside>
+    <el-main>
+      <div id="container"></div>
+    </el-main>
   </el-container>
 </template>
 
@@ -28,53 +31,29 @@ let floor = new Array(10)
 // 详细模型的桌椅
 let context = new Array(10)
 // 漫游模式
-let tweens = new Array(100)
-let positions = new Array(100)
-// eslint-disable-next-line no-unused-vars
-let centers = new Array(10)
+let tweens = new Array(1000)
+let positions = new Array(1000)
+
 export default {
   data () {
     return {
+      // 漫游与巡视按钮
+      ableRoaming: false,
+      switchRoaming: false,
+      ablePatrol: false,
+      switchPatrol: false,
       // 树形组件
-      simpleData: [{
-        id: 0,
-        label: '整体模型',
-        children: [{ id: 200, label: '整体漫游' }]
-      }],
+      simpleData: [{ id: 0, label: '整体模型' }],
       detailData: [{
         id: 1,
         label: '详细模型',
         children: [
-          {
-            id: 11,
-            label: '1L',
-            children: [{ id: 101, label: '1L墙体' }, { id: 102, label: '1L桌椅' }, { id: 201, label: '1L漫游' }]
-          },
-          {
-            id: 12,
-            label: '2L',
-            children: [{ id: 103, label: '2L墙体' }, { id: 104, label: '2L桌椅' }, { id: 202, label: '2L漫游' }]
-          },
-          {
-            id: 13,
-            label: '3L',
-            children: [{ id: 105, label: '3L墙体' }, { id: 106, label: '3L桌椅' }, { id: 203, label: '3L漫游' }]
-          },
-          {
-            id: 14,
-            label: '4L',
-            children: [{ id: 107, label: '4L墙体' }, { id: 108, label: '4L桌椅' }, { id: 204, label: '4L漫游' }]
-          },
-          {
-            id: 15,
-            label: '5L',
-            children: [{ id: 109, label: '5L墙体' }, { id: 110, label: '5L桌椅' }, { id: 205, label: '5L漫游' }]
-          },
-          {
-            id: 16,
-            label: '6L',
-            children: [{ id: 111, label: '6L墙体' }, { id: 112, label: '6L桌椅' }, { id: 206, label: '6L漫游' }]
-          }
+          { id: 11, label: '1L', children: [{ id: 101, label: '1L墙体' }, { id: 102, label: '1L桌椅' }] },
+          { id: 12, label: '2L', children: [{ id: 103, label: '2L墙体' }, { id: 104, label: '2L桌椅' }] },
+          { id: 13, label: '3L', children: [{ id: 105, label: '3L墙体' }, { id: 106, label: '3L桌椅' }] },
+          { id: 14, label: '4L', children: [{ id: 107, label: '4L墙体' }, { id: 108, label: '4L桌椅' }] },
+          { id: 15, label: '5L', children: [{ id: 109, label: '5L墙体' }, { id: 110, label: '5L桌椅' }] },
+          { id: 16, label: '6L', children: [{ id: 111, label: '6L墙体' }, { id: 112, label: '6L桌椅' }] }
         ]
       }],
       defaultProps: {
@@ -87,22 +66,9 @@ export default {
       mesh: null,
       clock: null,
       // 判断加载
-      isLoaded_0: false,
-      isLoaded_1: false,
-      isLoaded_11: false,
-      isLoaded_12: false,
-      isLoaded_13: false,
-      isLoaded_14: false,
-      isLoaded_15: false,
-      isLoaded_16: false,
+      isLoaded: Array.apply(null, Array(20)).map(() => false),
       // 判断动画
-      isTween_0: false,
-      isTween_1: false,
-      isTween_2: false,
-      isTween_3: false,
-      isTween_4: false,
-      isTween_5: false,
-      isTween_6: false
+      isTween: Array.apply(null, Array(100)).map(() => false)
     }
   },
   mounted () {
@@ -110,9 +76,55 @@ export default {
     this.animate()
   },
   methods: {
-    // 菜单的折叠与展开
-    toggleCollapse () {
-      this.isCollapse = !this.isCollapse
+    // 漫游
+    roamingChange (state) {
+      this.switchRoaming = !this.switchRoaming
+      if (state) { // 执行漫游
+        // 获取当前的选中楼层
+        let checked = null
+        if (this.isLoaded[0]) {
+          checked = 0
+        } else {
+          for (let i = 11; i <= 16; i++) {
+            if (this.isLoaded[i]) {
+              checked = i
+              break
+            }
+          }
+        }
+        // 执行漫游
+        if (checked === null) console.assert('roaming bug')
+        else {
+          tweens[checked % 10 * 10].start()
+        }
+      } else { // 停止漫游
+        for (let i = 0; i < 70; ++i) {
+          tweens[i].stop()
+        }
+      }
+    },
+    // 巡视
+    patrolChange (state) {
+      this.switchPatrol = !this.switchPatrol
+      if (state) { // 执行巡视
+        // 获取当前的选中楼层
+        let checked = null
+        for (let i = 11; i <= 16; i++) {
+          if (this.isLoaded[i]) {
+            checked = i
+            break
+          }
+        }
+        // 执行漫游
+        if (checked === null) console.assert('patrol bug')
+        else {
+          tweens[checked % 10 * 100].start()
+        }
+      } else { // 停止巡视
+        for (let i = 100; i < 700; ++i) {
+          tweens[i].stop()
+        }
+      }
     },
     // 选择状态置空
     resetChecked () {
@@ -126,106 +138,127 @@ export default {
     // 点击树节点事件处理
     handleTreeNodeClick (data) {
       // 模拟tree加载情况
-      if (data.id === 0) {
+      // 模型加载模块
+      if (data.id === 0) { // 整体模型
         this.resetChecked()
-        if (!this.isLoaded_0) this.setCheckedKeys(0)
-        this.isLoaded_0 = !this.isLoaded_0
-        if (this.isLoaded_0) {
+        if (!this.isLoaded[0]) this.setCheckedKeys(0)
+        this.isLoaded[0] = !this.isLoaded[0]
+        if (this.isLoaded[0]) {
           floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
           context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
         } else {
           floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
           context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
         }
-        return
-      } else {
-        if (this.isLoaded_0) {
+      } else { // 详细模型
+        if (this.isLoaded[0]) {
           this.resetChecked()
-          this.isLoaded_0 = false
+          this.isLoaded[0] = false
           this.setCheckedKeys(data.id)
           floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
           context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
         }
       }
-      this.isLoaded_11 = !!(floor[1].visible && context[1].visible)
-      this.isLoaded_12 = !!(floor[2].visible && context[2].visible)
-      this.isLoaded_13 = !!(floor[3].visible && context[3].visible)
-      this.isLoaded_14 = !!(floor[4].visible && context[4].visible)
-      this.isLoaded_15 = !!(floor[5].visible && context[5].visible)
-      this.isLoaded_16 = !!(floor[6].visible && context[6].visible)
-      this.isLoaded_1 = !!(floor[1].visible && context[1].visible && floor[2].visible && context[2].visible &&
+      // 楼层状态更新
+      this.isLoaded[11] = floor[1].visible && context[1].visible
+      this.isLoaded[12] = floor[2].visible && context[2].visible
+      this.isLoaded[13] = floor[3].visible && context[3].visible
+      this.isLoaded[14] = floor[4].visible && context[4].visible
+      this.isLoaded[15] = floor[5].visible && context[5].visible
+      this.isLoaded[16] = floor[6].visible && context[6].visible
+      this.isLoaded[1] = floor[1].visible && context[1].visible && floor[2].visible && context[2].visible &&
         floor[3].visible && context[3].visible && floor[4].visible && context[4].visible &&
-        floor[5].visible && context[5].visible && floor[6].visible && context[6].visible)
+        floor[5].visible && context[5].visible && floor[6].visible && context[6].visible
       // 加载和删除模型
       switch (data.id) {
         case 1:
-          this.isLoaded_1 = !this.isLoaded_1
-          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = this.isLoaded_1
-          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = this.isLoaded_1
+          this.isLoaded[1] = !this.isLoaded[1]
+          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = this.isLoaded[1]
+          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = this.isLoaded[1]
           break
         case 11:
-          this.isLoaded_11 = !this.isLoaded_11
-          floor[1].visible = context[1].visible = this.isLoaded_11
+          this.isLoaded[11] = !this.isLoaded[11]
+          floor[1].visible = context[1].visible = this.isLoaded[11]
           break
         case 12:
-          this.isLoaded_12 = !this.isLoaded_12
-          floor[2].visible = context[2].visible = this.isLoaded_12
+          this.isLoaded[12] = !this.isLoaded[12]
+          floor[2].visible = context[2].visible = this.isLoaded[12]
           break
         case 13:
-          this.isLoaded_13 = !this.isLoaded_13
-          floor[3].visible = context[3].visible = this.isLoaded_13
+          this.isLoaded[13] = !this.isLoaded[13]
+          floor[3].visible = context[3].visible = this.isLoaded[13]
           break
         case 14:
-          this.isLoaded_14 = !this.isLoaded_14
-          floor[4].visible = context[4].visible = this.isLoaded_14
+          this.isLoaded[14] = !this.isLoaded[14]
+          floor[4].visible = context[4].visible = this.isLoaded[14]
           break
         case 15:
-          this.isLoaded_15 = !this.isLoaded_15
-          floor[5].visible = context[5].visible = this.isLoaded_15
+          this.isLoaded[15] = !this.isLoaded[15]
+          floor[5].visible = context[5].visible = this.isLoaded[15]
           break
         case 16:
-          this.isLoaded_16 = !this.isLoaded_16
-          floor[6].visible = context[6].visible = this.isLoaded_16
+          this.isLoaded[16] = !this.isLoaded[16]
+          floor[6].visible = context[6].visible = this.isLoaded[16]
           break
         case 101:
           floor[1].visible = !floor[1].visible
+          if (floor[1].visible === context[1].visible) this.isLoaded[11] = floor[1].visible
           break
         case 102:
           context[1].visible = !context[1].visible
+          if (floor[1].visible === context[1].visible) this.isLoaded[11] = floor[1].visible
           break
         case 103:
           floor[2].visible = !floor[2].visible
+          if (floor[2].visible === context[2].visible) this.isLoaded[12] = floor[2].visible
           break
         case 104:
           context[2].visible = !context[2].visible
+          if (floor[2].visible === context[2].visible) this.isLoaded[12] = floor[2].visible
           break
         case 105:
           floor[3].visible = !floor[3].visible
+          if (floor[3].visible === context[3].visible) this.isLoaded[13] = floor[3].visible
           break
         case 106:
           context[3].visible = !context[3].visible
+          if (floor[3].visible === context[3].visible) this.isLoaded[13] = floor[3].visible
           break
         case 107:
           floor[4].visible = !floor[4].visible
+          if (floor[4].visible === context[4].visible) this.isLoaded[14] = floor[4].visible
           break
         case 108:
           context[4].visible = !context[4].visible
+          if (floor[4].visible === context[4].visible) this.isLoaded[14] = floor[4].visible
           break
         case 109:
           floor[5].visible = !floor[5].visible
+          if (floor[5].visible === context[5].visible) this.isLoaded[15] = floor[5].visible
           break
         case 110:
           context[5].visible = !context[5].visible
+          if (floor[5].visible === context[5].visible) this.isLoaded[15] = floor[5].visible
           break
         case 111:
           floor[6].visible = !floor[6].visible
+          if (floor[6].visible === context[6].visible) this.isLoaded[16] = floor[6].visible
           break
         case 112:
           context[6].visible = !context[6].visible
+          if (floor[6].visible === context[6].visible) this.isLoaded[16] = floor[6].visible
           break
-        default:
-          this.tweenSolve(data.id) // 动画
       }
+      // 漫游和巡视模块
+      let countLoad = 0
+      let isConsistSingle = false
+      for (let i = 11; i <= 16; ++i) {
+        if (this.isLoaded[i]) countLoad++
+        if (context[i % 10].visible !== floor[i % 10].visible) isConsistSingle = true
+      }
+      console.log(countLoad, isConsistSingle)
+      this.ableRoaming = (!isConsistSingle && countLoad === 1) || this.isLoaded[0]
+      this.ablePatrol = !isConsistSingle && (countLoad === 1)
     },
     // 初始化
     init () {
@@ -483,8 +516,4 @@ export default {
   width: 80%;
 }
 
-el-container {
-  width: 100%;
-  height: 100%;
-}
 </style>
