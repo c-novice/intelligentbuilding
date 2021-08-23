@@ -94,6 +94,48 @@ export default {
         if (checked === null) console.assert('roaming bug')
         else {
           tweens[checked % 10 * 10].start()
+          // 监控鼠标单击
+          let cur = 0
+          document.onclick = function () {
+            // eslint-disable-next-line eqeqeq
+            if (cur === 0) {
+              cur = cur + 1
+              alert('点击确定开始漫游')
+            } else if (cur === 1) {
+              cur = 2
+              let myVar = setInterval(go, 1000)
+              // 超时15秒
+              let count = 0
+              let outTime = 4
+              // eslint-disable-next-line no-inner-declarations
+              function go () {
+                count++
+                // eslint-disable-next-line eqeqeq
+                if (count === outTime) {
+                  tweens[checked % 10 * 10].start()
+                  clearInterval(myVar)
+                  cur = 1
+                }
+              }
+              let x, y
+              // 监听鼠标
+              document.onmousemove = function (event) {
+                const x1 = event.clientX
+                const y1 = event.clientY
+                if (x !== x1 || y !== y1) {
+                  count = 0
+                }
+                x = x1
+                y = y1
+              }
+              for (let i = 0; i < 70; ++i) {
+                tweens[i].stop()
+              }
+            } else {
+              cur = 1
+              tweens[checked % 10 * 10].start()
+            }
+          }
         }
       } else { // 停止漫游
         for (let i = 0; i < 70; ++i) {
@@ -315,6 +357,8 @@ export default {
       this.objectLoader('./static/4楼桌椅/4楼桌椅.gltf', 'context', 4)
       this.objectLoader('./static/5楼桌椅/5楼桌椅.gltf', 'context', 5)
       this.objectLoader('./static/6楼桌椅/6楼桌椅.gltf', 'context', 6)
+      const axesHelper = new THREE.AxesHelper(150)
+      scene.add(axesHelper)
       // 漫游数据
       // 位置
       // 整体
@@ -398,7 +442,6 @@ export default {
         obj.scale.x = 0.2
         obj.scale.y = 0.2
         obj.scale.z = 0.2
-        // eslint-disable-next-line camelcase
         if (type === 'floor') {
           floor[id] = new THREE.Group()
           floor[id].add(obj)
@@ -422,5 +465,4 @@ export default {
   right: 0;
   width: 80%;
 }
-
 </style>
