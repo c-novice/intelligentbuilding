@@ -30,7 +30,7 @@ let camera = null
 let floor = new Array(10)
 // 详细模型的桌椅
 let context = new Array(10)
-// 漫游模式
+// 漫游和巡视模式
 let tweens = new Array(1000)
 let positions = new Array(1000)
 
@@ -66,9 +66,7 @@ export default {
       mesh: null,
       clock: null,
       // 判断加载
-      isLoaded: Array.apply(null, Array(20)).map(() => false),
-      // 判断动画
-      isTween: Array.apply(null, Array(100)).map(() => false)
+      isLoaded: Array.apply(null, Array(20)).map(() => false)
     }
   },
   mounted () {
@@ -413,97 +411,6 @@ export default {
           context[id].visible = false
         }
       })
-    },
-    // 动画处理
-    tweenSolve (id) {
-      floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
-      context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
-      switch (id) {
-        case 200:
-          this.isTween_0 = !this.isTween_0
-          if (this.isTween_0) {
-            floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
-            tweens[0].start()
-          } else {
-            tweens[0].stop()
-            tweens[1].stop()
-            tweens[2].stop()
-            tweens[3].stop()
-          }
-          break
-        case 201:
-          this.isTween_1 = !this.isTween_1
-          if (this.isTween_1) {
-            floor[1].visible = context[1].visible = true
-            tweens[4].start()
-          } else {
-            tweens[4].stop()
-            tweens[5].stop()
-            tweens[6].stop()
-            tweens[7].stop()
-          }
-          break
-        case 202:
-          this.isTween_2 = !this.isTween_2
-          if (this.isTween_2) {
-            floor[2].visible = context[2].visible = true
-            tweens[8].start()
-          } else {
-            tweens[8].stop()
-            tweens[9].stop()
-            tweens[10].stop()
-            tweens[11].stop()
-          }
-          break
-        case 203:
-          this.isTween_3 = !this.isTween_3
-          if (this.isTween_3) {
-            floor[3].visible = context[3].visible = true
-            tweens[12].start()
-          } else {
-            tweens[12].stop()
-            tweens[13].stop()
-            tweens[14].stop()
-            tweens[15].stop()
-          }
-          break
-        case 204:
-          this.isTween_4 = !this.isTween_4
-          if (this.isTween_4) {
-            floor[4].visible = context[4].visible = true
-            tweens[16].start()
-          } else {
-            tweens[16].stop()
-            tweens[17].stop()
-            tweens[18].stop()
-            tweens[19].stop()
-          }
-          break
-        case 205:
-          this.isTween_5 = !this.isTween_5
-          if (this.isTween_5) {
-            floor[5].visible = context[5].visible = true
-            tweens[20].start()
-          } else {
-            tweens[20].stop()
-            tweens[21].stop()
-            tweens[22].stop()
-            tweens[23].stop()
-          }
-          break
-        case 206:
-          this.isTween_6 = !this.isTween_6
-          if (this.isTween_6) {
-            floor[6].visible = context[6].visible = true
-            tweens[24].start()
-          } else {
-            tweens[24].stop()
-            tweens[25].stop()
-            tweens[26].stop()
-            tweens[27].stop()
-          }
-          break
-      }
     }
   }
 }
