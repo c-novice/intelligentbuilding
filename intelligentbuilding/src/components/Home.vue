@@ -105,24 +105,25 @@ export default {
           // 监控鼠标单击
           let cur = 1
           document.onclick = () => {
-            if (!this.switchRoaming) return
-            cur = (cur + 1) % 2
-            if (cur === 0) {
-              // 提示进入漫游
-              this.$message.success('您已进入漫游模式，点击触摸屏会暂停15s')
-              tweens[checked % 10 * 10].start()
-            } else if (cur === 1) {
-              let count = 0
-              let myVar = setInterval(() => {
-                count++
-                if (count === 4) {
-                  tweens[checked % 10 * 10].start()
-                  clearInterval(myVar)
-                  cur = 0
+            if (this.switchRoaming) {
+              cur = (cur + 1) % 2
+              if (cur === 0) {
+                // 提示进入漫游
+                this.$message.success('您已进入漫游模式，点击触摸屏会暂停15s')
+                tweens[checked % 10 * 10].start()
+              } else if (cur === 1) {
+                let count = 0
+                let myVar = setInterval(() => {
+                  count++
+                  if (count === 4) {
+                    tweens[checked % 10 * 10].start()
+                    clearInterval(myVar)
+                    cur = 0
+                  }
+                }, 1000)
+                for (let i = 0; i < 70; ++i) {
+                  if (tweens[i] != null) tweens[i].stop()
                 }
-              }, 1000)
-              for (let i = 0; i < 70; ++i) {
-                if (tweens[i] != null) tweens[i].stop()
               }
             }
           }
@@ -139,8 +140,11 @@ export default {
     },
     // 巡视
     patrolChange (state) {
-      this.switchPatrol = !this.switchPatrol
+      this.switchPatrol = !!this.switchPatrol
       if (state) { // 执行巡视
+        // 设置禁用关系
+        this.ableRoaming = false
+        this.ableTree = true
         // 获取当前的选中楼层
         let checked = null
         for (let i = 11; i <= 16; i++) {
@@ -149,14 +153,43 @@ export default {
             break
           }
         }
-        // 执行漫游
+        // 执行巡视
         if (checked === null) console.assert('patrol bug')
         else {
           tweens[checked % 10 * 100].start()
+          // 监控鼠标单击
+          let cur = 1
+          document.onclick = () => {
+            if (this.switchPatrol) {
+              cur = (cur + 1) % 2
+              if (cur === 0) {
+                // 提示进入巡视
+                this.$message.success('您已进入巡视模式，点击触摸屏会暂停15s')
+                tweens[checked % 10 * 10].start()
+              } else if (cur === 1) {
+                let count = 0
+                let myVar = setInterval(() => {
+                  count++
+                  if (count === 4) {
+                    tweens[checked % 10 * 10].start()
+                    clearInterval(myVar)
+                    cur = 0
+                  }
+                }, 1000)
+                for (let i = 100; i < 700; ++i) {
+                  if (tweens[i] != null) tweens[i].stop()
+                }
+              }
+            }
+          }
         }
       } else { // 停止巡视
+        this.$message.success('您已退出巡视模式')
+        // 解除禁用关系
+        this.ableRoaming = true
+        this.ableTree = false
         for (let i = 100; i < 700; ++i) {
-          tweens[i].stop()
+          if (tweens[i] != null) tweens[i].stop()
         }
       }
     },
