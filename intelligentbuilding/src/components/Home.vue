@@ -35,7 +35,6 @@ let context = new Array(10)
 // 漫游和巡视模式
 let tweens = new Array(1000)
 let positions = new Array(1000)
-
 export default {
   data () {
     return {
@@ -470,6 +469,113 @@ export default {
       for (let i = 0; i <= 6; ++i) {
         for (let j = 0; j <= 3; ++j) {
           tweens[i * 10 + j].chain(tweens[(j + 1) % 4 === 0 ? i * 10 + j - 3 : i * 10 + j + 1])
+        }
+      }
+      // 1L
+      positions[100] = { px: 2.12, py: 0.31, pz: -9.75 }
+      positions[101] = { px: 10.4, pz: -9.75, py: 0.31 }
+      positions[102] = { px: 10.4, pz: -2, py: 0.31 }
+      positions[103] = { px: 2.12, pz: -2, py: 0.31 }
+      // 2L
+      positions[200] = { px: 2.12, py: 1.2, pz: -9.75 }
+      positions[201] = { px: 10.4, pz: -9.75, py: 1.2 }
+      positions[202] = { px: 10.4, pz: -2, py: 1.2 }
+      positions[203] = { px: 2.12, pz: -2, py: 1.2 }
+      // 3L
+      positions[300] = { px: 2.12, py: 1.98, pz: -9.75 }
+      positions[301] = { px: 10.4, pz: -9.75, py: 1.98 }
+      positions[302] = { px: 10.4, pz: -2, py: 1.98 }
+      positions[303] = { px: 2.12, pz: -2, py: 1.98 }
+      // 4L
+      positions[400] = { px: 2.12, py: 2.87, pz: -9.75 }
+      positions[401] = { px: 10.4, pz: -9.75, py: 2.87 }
+      positions[402] = { px: 10.4, pz: -2, py: 2.87 }
+      positions[403] = { px: 2.12, pz: -2, py: 2.87 }
+      // 5L
+      positions[500] = { px: 2.12, py: 3.77, pz: -9.75 }
+      positions[501] = { px: 10.4, pz: -9.75, py: 3.77 }
+      positions[502] = { px: 10.4, pz: -2, py: 3.77 }
+      positions[503] = { px: 2.12, pz: -2, py: 3.77 }
+      // 6L
+      positions[600] = { px: 2.12, py: 4.57, pz: -9.75 }
+      positions[601] = { px: 10.4, pz: -9.75, py: 4.57 }
+      positions[602] = { px: 10.4, pz: -2, py: 4.57 }
+      positions[603] = { px: 2.12, pz: -2, py: 4.57 }
+      for (let i = 1; i < 7; ++i) {
+        for (let j = 0; j <= 3; j++) {
+          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[i * 100 + j], 5500)
+            .onUpdate(function (object) {
+              camera.position.x = object.px
+              camera.position.z = object.pz
+              camera.position.y = object.py
+              if (i === 1) {
+                if (camera.position.x > 2.12 && camera.position.x < 10.4 && camera.position.z === -9.75) {
+                  camera.lookAt(10.4, 0.31, -9.75)
+                } else if (camera.position.z > -9.75 && camera.position.z < -2 && camera.position.x === 10.4) {
+                  camera.lookAt(10.4, 0.31, -2)
+                } else if (camera.position.x > 2.12 && camera.position.x < 10.4 && camera.position.z === -2) {
+                  camera.lookAt(2.12, 0.31, -2)
+                } else if (camera.position.z > -9.75 && camera.position.z < -2 && camera.position.x === 2.12) {
+                  camera.lookAt(2.12, 0.31, -9.75)
+                }
+              } else if (i === 2) {
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
+                  camera.lookAt(10.4, 1.2, -9.75)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
+                  camera.lookAt(10.4, 1.2, -2)
+                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
+                  camera.lookAt(2.12, 1.2, -2)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
+                  camera.lookAt(2.12, 1.2, -9.75)
+                }
+              } else if (i === 3) {
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
+                  camera.lookAt(10.4, 1.98, -9.75)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
+                  camera.lookAt(10.4, 1.98, -2)
+                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
+                  camera.lookAt(2.12, 1.98, -2)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
+                  camera.lookAt(2.12, 1.98, -9.75)
+                }
+              } else if (i === 4) {
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
+                  camera.lookAt(10.4, 2.87, -9.75)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
+                  camera.lookAt(10.4, 2.87, -2)
+                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
+                  camera.lookAt(2.12, 2.87, -2)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
+                  camera.lookAt(2.12, 2.87, -9.75)
+                }
+              } else if (i === 5) {
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
+                  camera.lookAt(10.4, 3.77, -9.75)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
+                  camera.lookAt(10.4, 3.77, -2)
+                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
+                  camera.lookAt(2.12, 3.77, -2)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
+                  camera.lookAt(2.12, 3.77, -9.75)
+                }
+              } else if (i === 6) {
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
+                  camera.lookAt(10.4, 4.57, -9.75)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
+                  camera.lookAt(10.4, 4.57, -2)
+                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
+                  camera.lookAt(2.12, 4.57, -2)
+                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
+                  camera.lookAt(2.12, 4.57, -9.75)
+                }
+              }
+            })
+          tweens[i * 100 + j].easing(TWEEN.Easing.Quadratic.Out)
+        }
+      }
+      for (let i = 1; i < 7; ++i) {
+        for (let j = 0; j <= 3; ++j) {
+          tweens[i * 100 + j].chain(tweens[i * 100 + j])
         }
       }
     },
