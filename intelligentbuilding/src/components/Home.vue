@@ -249,6 +249,7 @@ export default {
           this.isLoaded[1] = !this.isLoaded[1]
           floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = this.isLoaded[1]
           context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = this.isLoaded[1]
+          this.isLoaded[11] = this.isLoaded[12] = this.isLoaded[13] = this.isLoaded[14] = this.isLoaded[15] = this.isLoaded[16] = this.isLoaded[1]
           break
         case 11:
           this.isLoaded[11] = !this.isLoaded[11]
@@ -400,40 +401,47 @@ export default {
       positions[1] = { px: 25, pz: -22, py: 10 }
       positions[2] = { px: -13, pz: -22, py: 10 }
       positions[3] = { px: -16, pz: 10, py: 10 }
+      positions[4] = { px: 20, py: 10, pz: 10 }
       // 1L
       positions[10] = { px: 20, py: 5, pz: 10 }
       positions[11] = { px: 25, pz: -22, py: 5 }
       positions[12] = { px: -13, pz: -22, py: 5 }
       positions[13] = { px: -16, pz: 10, py: 5 }
+      positions[14] = { px: 20, py: 5, pz: 10 }
       // 2L
       positions[20] = { px: 20, py: 6, pz: 10 }
       positions[21] = { px: 25, pz: -22, py: 6 }
       positions[22] = { px: -13, pz: -22, py: 6 }
       positions[23] = { px: -16, pz: 10, py: 6 }
+      positions[24] = { px: 20, py: 6, pz: 10 }
       // 3L
       positions[30] = { px: 20, py: 7, pz: 10 }
       positions[31] = { px: 25, pz: -22, py: 7 }
       positions[32] = { px: -13, pz: -22, py: 7 }
       positions[33] = { px: -16, pz: 10, py: 7 }
+      positions[34] = { px: 20, py: 7, pz: 10 }
       // 4L
       positions[40] = { px: 20, py: 8, pz: 10 }
       positions[41] = { px: 25, pz: -22, py: 8 }
       positions[42] = { px: -13, pz: -22, py: 8 }
       positions[43] = { px: -16, pz: 10, py: 8 }
+      positions[44] = { px: 20, py: 8, pz: 10 }
       // 5L
       positions[50] = { px: 20, py: 9, pz: 10 }
       positions[51] = { px: 25, pz: -22, py: 9 }
       positions[52] = { px: -13, pz: -22, py: 9 }
       positions[53] = { px: -16, pz: 10, py: 9 }
+      positions[54] = { px: 20, py: 9, pz: 10 }
       // 6L
       positions[60] = { px: 20, py: 10, pz: 10 }
       positions[61] = { px: 25, pz: -22, py: 10 }
       positions[62] = { px: -13, pz: -22, py: 10 }
       positions[63] = { px: -16, pz: 10, py: 10 }
+      positions[64] = { px: -16, pz: 10, py: 10 }
       // 动画
       for (let i = 0; i <= 6; ++i) {
         for (let j = 0; j <= 3; ++j) {
-          tweens[i * 10 + j] = new TWEEN.Tween(positions[i * 10 + j]).to(positions[(j + 1) % 4 === 0 ? i * 10 + j - 3 : i * 10 + j + 1], 5500)
+          tweens[i * 10 + j] = new TWEEN.Tween(positions[i * 10 + j]).to(positions[i * 10 + j + 1], 5500)
             .onUpdate(function (object) {
               camera.position.x = object.px
               camera.position.z = object.pz
