@@ -164,13 +164,13 @@ export default {
               if (cur === 0) {
                 // 提示进入巡视
                 this.$message.success('您已进入巡视模式，点击触摸屏会暂停15s')
-                tweens[checked % 10 * 10].start()
+                tweens[checked % 10 * 100].start()
               } else if (cur === 1) {
                 let count = 0
                 let myVar = setInterval(() => {
                   count++
                   if (count === 4) {
-                    tweens[checked % 10 * 10].start()
+                    tweens[checked % 10 * 100].start()
                     clearInterval(myVar)
                     cur = 0
                   }
