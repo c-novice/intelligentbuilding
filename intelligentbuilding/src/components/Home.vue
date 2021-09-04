@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-aside>
+    <el-aside style="width: 250px;">
       <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" "
                  @change="roamingChange"></el-switch>
       <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" "
@@ -35,6 +35,7 @@ let context = new Array(10)
 // 漫游和巡视模式
 let tweens = new Array(1000)
 let positions = new Array(1000)
+
 export default {
   data () {
     return {
@@ -440,8 +441,8 @@ export default {
       positions[64] = { px: -16, pz: 10, py: 10 }
       // 动画
       for (let i = 0; i <= 6; ++i) {
-        for (let j = 0; j <= 3; ++j) {
-          tweens[i * 10 + j] = new TWEEN.Tween(positions[i * 10 + j]).to(positions[i * 10 + j + 1], 5500)
+        for (let j = 0; j <= 4; ++j) {
+          tweens[i * 10 + j] = new TWEEN.Tween(positions[i * 10 + j]).to(positions[(j + 1) % 5 === 0 ? i * 10 + j - 4 : i * 10 + j + 1], 3500)
             .onUpdate(function (object) {
               camera.position.x = object.px
               camera.position.z = object.pz
@@ -475,8 +476,8 @@ export default {
       }
       // 连接
       for (let i = 0; i <= 6; ++i) {
-        for (let j = 0; j <= 3; ++j) {
-          tweens[i * 10 + j].chain(tweens[(j + 1) % 4 === 0 ? i * 10 + j - 3 : i * 10 + j + 1])
+        for (let j = 0; j <= 4; ++j) {
+          tweens[i * 10 + j].chain(tweens[(j + 1) % 5 === 0 ? i * 10 + j - 4 : i * 10 + j + 1])
         }
       }
       // 1L
@@ -511,7 +512,7 @@ export default {
       positions[603] = { px: 2.12, pz: -2, py: 4.57 }
       for (let i = 1; i < 7; ++i) {
         for (let j = 0; j <= 3; j++) {
-          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[i * 100 + j], 5500)
+          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[i * 100 + j], 3500)
             .onUpdate(function (object) {
               camera.position.x = object.px
               camera.position.z = object.pz
@@ -626,5 +627,11 @@ export default {
   position: absolute;
   right: 0;
   width: 80%;
+}
+
+el-aside {
+  position: absolute;
+  left: 0;
+  width: 15%;
 }
 </style>
