@@ -219,19 +219,25 @@ export default {
         if (!this.isLoaded[0]) this.setCheckedKeys(0)
         this.isLoaded[0] = !this.isLoaded[0]
         if (this.isLoaded[0]) {
-          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = true
-          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
+          for (let i = 1; i <= 6; ++i) {
+            floor[i].visible = true
+            context[i].visible = false
+          }
         } else {
-          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
-          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
+          for (let i = 1; i <= 6; ++i) {
+            floor[i].visible = false
+            context[i].visible = false
+          }
         }
       } else { // 详细模型
         if (this.isLoaded[0]) {
           this.resetChecked()
           this.isLoaded[0] = false
           this.setCheckedKeys(data.id)
-          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = false
-          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = false
+          for (let i = 1; i <= 6; ++i) {
+            floor[i].visible = false
+            context[i].visible = false
+          }
         }
       }
       // 楼层状态更新
@@ -480,39 +486,46 @@ export default {
           tweens[i * 10 + j].chain(tweens[(j + 1) % 5 === 0 ? i * 10 + j - 4 : i * 10 + j + 1])
         }
       }
+      // 巡视数据
       // 1L
       positions[100] = { px: 2.12, py: 0.31, pz: -9.75 }
       positions[101] = { px: 10.4, pz: -9.75, py: 0.31 }
       positions[102] = { px: 10.4, pz: -2, py: 0.31 }
       positions[103] = { px: 2.12, pz: -2, py: 0.31 }
+      positions[104] = { px: 2.12, pz: -2, py: 0.31 }
       // 2L
       positions[200] = { px: 2.12, py: 1.2, pz: -9.75 }
       positions[201] = { px: 10.4, pz: -9.75, py: 1.2 }
       positions[202] = { px: 10.4, pz: -2, py: 1.2 }
       positions[203] = { px: 2.12, pz: -2, py: 1.2 }
+      positions[204] = { px: 2.12, pz: -2, py: 1.2 }
       // 3L
       positions[300] = { px: 2.12, py: 1.98, pz: -9.75 }
       positions[301] = { px: 10.4, pz: -9.75, py: 1.98 }
       positions[302] = { px: 10.4, pz: -2, py: 1.98 }
       positions[303] = { px: 2.12, pz: -2, py: 1.98 }
+      positions[304] = { px: 2.12, pz: -2, py: 1.98 }
       // 4L
       positions[400] = { px: 2.12, py: 2.87, pz: -9.75 }
       positions[401] = { px: 10.4, pz: -9.75, py: 2.87 }
       positions[402] = { px: 10.4, pz: -2, py: 2.87 }
       positions[403] = { px: 2.12, pz: -2, py: 2.87 }
+      positions[404] = { px: 2.12, pz: -2, py: 2.87 }
       // 5L
       positions[500] = { px: 2.12, py: 3.77, pz: -9.75 }
       positions[501] = { px: 10.4, pz: -9.75, py: 3.77 }
       positions[502] = { px: 10.4, pz: -2, py: 3.77 }
       positions[503] = { px: 2.12, pz: -2, py: 3.77 }
+      positions[504] = { px: 2.12, pz: -2, py: 3.77 }
       // 6L
       positions[600] = { px: 2.12, py: 4.57, pz: -9.75 }
       positions[601] = { px: 10.4, pz: -9.75, py: 4.57 }
       positions[602] = { px: 10.4, pz: -2, py: 4.57 }
       positions[603] = { px: 2.12, pz: -2, py: 4.57 }
-      for (let i = 1; i < 7; ++i) {
-        for (let j = 0; j <= 3; j++) {
-          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[i * 100 + j], 3500)
+      positions[604] = { px: 2.12, pz: -2, py: 4.57 }
+      for (let i = 1; i <= 6; ++i) {
+        for (let j = 0; j <= 4; j++) {
+          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[(j + 1) % 5 === 0 ? i * 100 + j - 4 : i * 100 + j + 1], 3500)
             .onUpdate(function (object) {
               camera.position.x = object.px
               camera.position.z = object.pz
@@ -582,9 +595,10 @@ export default {
           tweens[i * 100 + j].easing(TWEEN.Easing.Quadratic.Out)
         }
       }
-      for (let i = 1; i < 7; ++i) {
-        for (let j = 0; j <= 3; ++j) {
-          tweens[i * 100 + j].chain(tweens[i * 100 + j])
+      // 连接
+      for (let i = 1; i <= 6; ++i) {
+        for (let j = 0; j <= 4; ++j) {
+          tweens[i * 100 + j].chain(tweens[(j + 1) % 5 === 0 ? i * 100 + j - 4 : i * 100 + j + 1])
         }
       }
     },
