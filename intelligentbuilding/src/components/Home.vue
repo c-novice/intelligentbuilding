@@ -221,7 +221,7 @@ export default {
         if (this.isLoaded[0]) {
           for (let i = 1; i <= 6; ++i) {
             floor[i].visible = true
-            context[i].visible = false
+            context[i].visible = true
           }
         } else {
           for (let i = 1; i <= 6; ++i) {
@@ -239,108 +239,44 @@ export default {
             context[i].visible = false
           }
         }
-      }
-      // 楼层状态更新
-      this.isLoaded[11] = floor[1].visible && context[1].visible
-      this.isLoaded[12] = floor[2].visible && context[2].visible
-      this.isLoaded[13] = floor[3].visible && context[3].visible
-      this.isLoaded[14] = floor[4].visible && context[4].visible
-      this.isLoaded[15] = floor[5].visible && context[5].visible
-      this.isLoaded[16] = floor[6].visible && context[6].visible
-      this.isLoaded[1] = floor[1].visible && context[1].visible && floor[2].visible && context[2].visible &&
-        floor[3].visible && context[3].visible && floor[4].visible && context[4].visible &&
-        floor[5].visible && context[5].visible && floor[6].visible && context[6].visible
-      // 加载和删除模型
-      switch (data.id) {
-        case 1:
+        // 楼层状态更新
+        for (let i = 1; i <= 6; ++i) {
+          this.isLoaded[10 + i] = floor[i].visible && context[i].visible
+        }
+        let flag = floor[1].visible
+        for (let i = 1; i <= 6; ++i) {
+          flag = (flag && floor[i].visible && context[i].visible)
+        }
+        this.isLoaded[1] = flag
+        // 加载和删除模型
+        if (data.id === 1) {
           this.isLoaded[1] = !this.isLoaded[1]
-          floor[1].visible = floor[2].visible = floor[3].visible = floor[4].visible = floor[5].visible = floor[6].visible = this.isLoaded[1]
-          context[1].visible = context[2].visible = context[3].visible = context[4].visible = context[5].visible = context[6].visible = this.isLoaded[1]
-          this.isLoaded[11] = this.isLoaded[12] = this.isLoaded[13] = this.isLoaded[14] = this.isLoaded[15] = this.isLoaded[16] = this.isLoaded[1]
-          break
-        case 11:
-          this.isLoaded[11] = !this.isLoaded[11]
-          floor[1].visible = context[1].visible = this.isLoaded[11]
-          break
-        case 12:
-          this.isLoaded[12] = !this.isLoaded[12]
-          floor[2].visible = context[2].visible = this.isLoaded[12]
-          break
-        case 13:
-          this.isLoaded[13] = !this.isLoaded[13]
-          floor[3].visible = context[3].visible = this.isLoaded[13]
-          break
-        case 14:
-          this.isLoaded[14] = !this.isLoaded[14]
-          floor[4].visible = context[4].visible = this.isLoaded[14]
-          break
-        case 15:
-          this.isLoaded[15] = !this.isLoaded[15]
-          floor[5].visible = context[5].visible = this.isLoaded[15]
-          break
-        case 16:
-          this.isLoaded[16] = !this.isLoaded[16]
-          floor[6].visible = context[6].visible = this.isLoaded[16]
-          break
-        case 101:
-          floor[1].visible = !floor[1].visible
-          if (floor[1].visible === context[1].visible) this.isLoaded[11] = floor[1].visible
-          break
-        case 102:
-          context[1].visible = !context[1].visible
-          if (floor[1].visible === context[1].visible) this.isLoaded[11] = floor[1].visible
-          break
-        case 103:
-          floor[2].visible = !floor[2].visible
-          if (floor[2].visible === context[2].visible) this.isLoaded[12] = floor[2].visible
-          break
-        case 104:
-          context[2].visible = !context[2].visible
-          if (floor[2].visible === context[2].visible) this.isLoaded[12] = floor[2].visible
-          break
-        case 105:
-          floor[3].visible = !floor[3].visible
-          if (floor[3].visible === context[3].visible) this.isLoaded[13] = floor[3].visible
-          break
-        case 106:
-          context[3].visible = !context[3].visible
-          if (floor[3].visible === context[3].visible) this.isLoaded[13] = floor[3].visible
-          break
-        case 107:
-          floor[4].visible = !floor[4].visible
-          if (floor[4].visible === context[4].visible) this.isLoaded[14] = floor[4].visible
-          break
-        case 108:
-          context[4].visible = !context[4].visible
-          if (floor[4].visible === context[4].visible) this.isLoaded[14] = floor[4].visible
-          break
-        case 109:
-          floor[5].visible = !floor[5].visible
-          if (floor[5].visible === context[5].visible) this.isLoaded[15] = floor[5].visible
-          break
-        case 110:
-          context[5].visible = !context[5].visible
-          if (floor[5].visible === context[5].visible) this.isLoaded[15] = floor[5].visible
-          break
-        case 111:
-          floor[6].visible = !floor[6].visible
-          if (floor[6].visible === context[6].visible) this.isLoaded[16] = floor[6].visible
-          break
-        case 112:
-          context[6].visible = !context[6].visible
-          if (floor[6].visible === context[6].visible) this.isLoaded[16] = floor[6].visible
-          break
+          for (let i = 1; i <= 6; ++i) {
+            floor[i].visible = context[i].visible = this.isLoaded[1]
+            this.isLoaded[10 + i] = this.isLoaded[1]
+          }
+        } else if (data.id < 20) {
+          this.isLoaded[data.id] = !this.isLoaded[data.id]
+          floor[data.id % 10].visible = context[data.id % 10].visible = this.isLoaded[data.id]
+        } else if (data.id < 1000) {
+          if (data.id % 2 === 0) {
+            context[(data.id % 100) / 2].visible = !context[(data.id % 100) / 2].visible
+            if (floor[(data.id % 100) / 2].visible === context[(data.id % 100) / 2].visible) this.isLoaded[10 + ((data.id % 100) / 2)] = floor[(data.id % 100) / 2].visible
+          } else {
+            floor[(data.id % 100 + 1) / 2].visible = !floor[(data.id % 100 + 1) / 2].visible
+            if (floor[(data.id % 100 + 1) / 2].visible === context[(data.id % 100 + 1) / 2].visible) this.isLoaded[10 + ((data.id % 100 + 1) / 2)] = floor[(data.id % 100 + 1) / 2].visible
+          }
+        }
+        // 漫游和巡视模块
+        let countLoad = 0
+        let isConsistSingle = false
+        for (let i = 11; i <= 16; ++i) {
+          if (this.isLoaded[i]) countLoad++
+          if (context[i % 10].visible !== floor[i % 10].visible) isConsistSingle = true
+        }
+        this.ableRoaming = (!isConsistSingle && countLoad === 1) || this.isLoaded[0]
+        this.ablePatrol = !isConsistSingle && (countLoad === 1)
       }
-      // 漫游和巡视模块
-      let countLoad = 0
-      let isConsistSingle = false
-      for (let i = 11; i <= 16; ++i) {
-        if (this.isLoaded[i]) countLoad++
-        if (context[i % 10].visible !== floor[i % 10].visible) isConsistSingle = true
-      }
-      console.log(countLoad, isConsistSingle)
-      this.ableRoaming = (!isConsistSingle && countLoad === 1) || this.isLoaded[0]
-      this.ablePatrol = !isConsistSingle && (countLoad === 1)
     },
     // 初始化
     init () {
@@ -387,18 +323,10 @@ export default {
       controls.target.set(5, 0, -10)
       controls.update()
       // 模型加载
-      this.objectLoader('./static/1楼墙体/1楼墙体.gltf', 'floor', 1)
-      this.objectLoader('./static/2楼墙体/2楼墙体.gltf', 'floor', 2)
-      this.objectLoader('./static/3楼墙体/3楼墙体.gltf', 'floor', 3)
-      this.objectLoader('./static/4楼墙体/4楼墙体.gltf', 'floor', 4)
-      this.objectLoader('./static/5楼墙体/5楼墙体.gltf', 'floor', 5)
-      this.objectLoader('./static/6楼墙体/6楼墙体.gltf', 'floor', 6)
-      this.objectLoader('./static/1楼桌椅/1楼桌椅.gltf', 'context', 1)
-      this.objectLoader('./static/2楼桌椅/2楼桌椅.gltf', 'context', 2)
-      this.objectLoader('./static/3楼桌椅/3楼桌椅.gltf', 'context', 3)
-      this.objectLoader('./static/4楼桌椅/4楼桌椅.gltf', 'context', 4)
-      this.objectLoader('./static/5楼桌椅/5楼桌椅.gltf', 'context', 5)
-      this.objectLoader('./static/6楼桌椅/6楼桌椅.gltf', 'context', 6)
+      for (let i = 1; i <= 6; ++i) {
+        this.objectLoader('./static/' + i.toString() + '楼墙体/' + i.toString() + '楼墙体.gltf', 'floor', i)
+        this.objectLoader('./static/' + i.toString() + '楼桌椅/' + i.toString() + '楼桌椅.gltf', 'context', i)
+      }
       const axesHelper = new THREE.AxesHelper(150)
       scene.add(axesHelper)
       // 漫游数据
@@ -453,29 +381,13 @@ export default {
               camera.position.x = object.px
               camera.position.z = object.pz
               camera.position.y = object.py
-              switch (i) {
-                case 0:
-                  camera.lookAt(6.5, 1, -6)
-                  break
-                case 1:
-                  camera.lookAt(6.5, 2, -6)
-                  break
-                case 2:
-                  camera.lookAt(6.5, 2, -6)
-                  break
-                case 3:
-                  camera.lookAt(6.5, 3, -6)
-                  break
-                case 4:
-                  camera.lookAt(6.5, 4, -6)
-                  break
-                case 5:
-                  camera.lookAt(6.5, 4, -6)
-                  break
-                case 6:
-                  camera.lookAt(6.5, 5, -6)
-                  break
-              }
+              if (i === 0) camera.lookAt(6.5, 1, -6)
+              else if (i === 1) camera.lookAt(6.5, 2, -6)
+              else if (i === 2) camera.lookAt(6.5, 2, -6)
+              else if (i === 3) camera.lookAt(6.5, 3, -6)
+              else if (i === 4) camera.lookAt(6.5, 4, -6)
+              else if (i === 5) camera.lookAt(6.5, 4, -6)
+              else if (i === 6) camera.lookAt(6.5, 5, -6)
             })
           tweens[i * 10 + j].easing(TWEEN.Easing.Quadratic.Out)
         }
@@ -613,12 +525,8 @@ export default {
       this.gltfLoader = new GLTFLoader()
       this.gltfLoader.load(url, (gltf) => {
         const obj = gltf.scene
-        obj.position.x = 0
-        obj.position.y = 0
-        obj.position.z = 0
-        obj.scale.x = 0.2
-        obj.scale.y = 0.2
-        obj.scale.z = 0.2
+        obj.position.x = obj.position.y = obj.position.z = 0
+        obj.scale.x = obj.scale.y = obj.scale.z = 0.2
         if (type === 'floor') {
           floor[id] = new THREE.Group()
           floor[id].add(obj)
