@@ -9,7 +9,7 @@ const Special = () => import('../components/special.vue')
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: '/home' },
+  { path: '/', redirect: '/special' },
   { path: '/home', component: Home },
   { path: '/normal', component: Normal },
   { path: '/special', component: Special }
