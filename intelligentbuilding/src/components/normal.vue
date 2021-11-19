@@ -34,10 +34,11 @@ let positions = new Array(1000)
 export default {
   data () {
     return {
-      cur: 4
+      cur: null
     }
   },
   mounted () {
+    this.cur = this.$route.query.cur
     this.init()
     this.animate()
   },
