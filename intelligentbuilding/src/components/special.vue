@@ -1,6 +1,10 @@
 <template>
   <el-container>
-    <el-aside style="width: 250px;">
+    <el-header>
+      <el-page-header content="自由组合">
+      </el-page-header>
+    </el-header>
+    <el-aside>
       <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" "
                  @change="roamingChange"></el-switch>
       <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" "
@@ -13,9 +17,7 @@
                :props="defaultProps" @check="handleTreeNodeClick">
       </el-tree>
     </el-aside>
-    <el-main>
-      <div id="container"></div>
-    </el-main>
+    <div id="container"></div>
   </el-container>
 </template>
 
@@ -102,6 +104,7 @@ export default {
         if (checked === null) console.assert('roaming bug')
         else {
           tweens[checked % 10 * 10].start()
+          this.$message.success('您已进入漫游模式')
           // 监控鼠标单击
           let cur = 1
           document.onclick = () => {
@@ -109,7 +112,6 @@ export default {
               cur = (cur + 1) % 2
               if (cur === 0) {
                 // 提示进入漫游
-                this.$message.success('您已进入漫游模式，点击触摸屏会暂停15s')
                 tweens[checked % 10 * 10].start()
               } else if (cur === 1) {
                 let count = 0
@@ -221,27 +223,29 @@ export default {
         if (this.isLoaded[0]) {
           for (let i = 1; i <= 6; ++i) {
             floor[i].visible = true
-            context[i].visible = true
+            context[i].visible = false
+            this.ableRoaming = true
+            this.ablePatrol = false
           }
         } else {
           for (let i = 1; i <= 6; ++i) {
-            floor[i].visible = false
-            context[i].visible = false
+            floor[i].visible = context[i].visible = false
+            this.ableRoaming = this.ablePatrol = false
           }
         }
       } else { // 详细模型
         if (this.isLoaded[0]) {
+          this.ableRoaming = this.ablePatrol = false
           this.resetChecked()
           this.isLoaded[0] = false
           this.setCheckedKeys(data.id)
           for (let i = 1; i <= 6; ++i) {
-            floor[i].visible = false
-            context[i].visible = false
+            floor[i].visible = context[i].visible = false
           }
         }
         // 楼层状态更新
         for (let i = 1; i <= 6; ++i) {
-          this.isLoaded[10 + i] = floor[i].visible && context[i].visible
+          this.isLoaded[10 + i] = (floor[i].visible && context[i].visible)
         }
         let flag = floor[1].visible
         for (let i = 1; i <= 6; ++i) {
@@ -284,7 +288,7 @@ export default {
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
       scene = new THREE.Scene()
-      scene.background = new THREE.Color(0xbfd1e5)
+      scene.background = new THREE.Color(255, 255, 255)
       // 创建渲染器对象
       this.renderer = new THREE.WebGLRenderer({ antialias: true })
       this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
@@ -327,7 +331,7 @@ export default {
         this.objectLoader('./static/' + i.toString() + '楼墙体/' + i.toString() + '楼墙体.gltf', 'floor', i)
         this.objectLoader('./static/' + i.toString() + '楼桌椅/' + i.toString() + '楼桌椅.gltf', 'context', i)
       }
-      const axesHelper = new THREE.AxesHelper(150)
+      const axesHelper = new THREE.AxesHelper(200)
       scene.add(axesHelper)
       // 漫游数据
       // 位置
@@ -453,55 +457,30 @@ export default {
                   camera.lookAt(2.12, 0.31, -9.75)
                 }
               } else if (i === 2) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
-                  camera.lookAt(10.4, 1.2, -9.75)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
-                  camera.lookAt(10.4, 1.2, -2)
-                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
-                  camera.lookAt(2.12, 1.2, -2)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
-                  camera.lookAt(2.12, 1.2, -9.75)
-                }
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 1.2, -9.75)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 1.2, -2)
+                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 1.2, -2)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 1.2, -9.75)
               } else if (i === 3) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
-                  camera.lookAt(10.4, 1.98, -9.75)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
-                  camera.lookAt(10.4, 1.98, -2)
-                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
-                  camera.lookAt(2.12, 1.98, -2)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
-                  camera.lookAt(2.12, 1.98, -9.75)
-                }
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 1.98, -9.75)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 1.98, -2)
+                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 1.98, -2)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 1.98, -9.75)
               } else if (i === 4) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
-                  camera.lookAt(10.4, 2.87, -9.75)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
-                  camera.lookAt(10.4, 2.87, -2)
-                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
-                  camera.lookAt(2.12, 2.87, -2)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
-                  camera.lookAt(2.12, 2.87, -9.75)
-                }
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 2.87, -9.75)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 2.87, -2)
+                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 2.87, -2)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 2.87, -9.75)
               } else if (i === 5) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
-                  camera.lookAt(10.4, 3.77, -9.75)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
-                  camera.lookAt(10.4, 3.77, -2)
-                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
-                  camera.lookAt(2.12, 3.77, -2)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
-                  camera.lookAt(2.12, 3.77, -9.75)
-                }
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 3.77, -9.75)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 3.77, -2)
+                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 3.77, -2)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 3.77, -9.75)
               } else if (i === 6) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) {
-                  camera.lookAt(10.4, 4.57, -9.75)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) {
-                  camera.lookAt(10.4, 4.57, -2)
-                } else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) {
-                  camera.lookAt(2.12, 4.57, -2)
-                } else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) {
-                  camera.lookAt(2.12, 4.57, -9.75)
-                }
+                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 4.57, -9.75)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 4.57, -2)
+                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 4.57, -2)
+                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 4.57, -9.75)
               }
             })
           tweens[i * 100 + j].easing(TWEEN.Easing.Quadratic.Out)
@@ -554,6 +533,6 @@ export default {
 el-aside {
   position: absolute;
   left: 0;
-  width: 15%;
+  width: 20%;
 }
 </style>

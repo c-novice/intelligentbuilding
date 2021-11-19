@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Aside, Container, Header, Main, Message, MessageBox, Tree, Switch } from 'element-ui'
+import { Aside, Container, Header, Main, Message, MessageBox, PageHeader, Switch, Tree } from 'element-ui'
 
 // 将组件全局挂在到VUe原形实例
 Vue.prototype.$message = Message
@@ -10,3 +10,4 @@ Vue.use(Main)
 Vue.use(Aside)
 Vue.use(Header)
 Vue.use(Switch)
+Vue.use(PageHeader)
