@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" style="margin: 100px 100px">
     <el-row :gutter="20">
       <el-col :span="6"  @click.native="switchTo('normal','1')">
         <div class="grid-content" style="background: aquamarine">
@@ -76,7 +76,7 @@ export default {
 .grid-content {
   display: flex;
   border-radius: 4px;
-  margin: 30px;
+  margin: 20px 20px;
   min-height: 120px;
   align-items: center;
   text-align: center;

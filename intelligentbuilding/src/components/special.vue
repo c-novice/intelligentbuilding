@@ -412,7 +412,6 @@ export default {
       positions[106] = { px: 2.12, pz: -2, py: 0.31 }
       positions[107] = { px: 2.12, pz: -9.75, py: 0.31 }
       positions[108] = { px: 2.12, pz: -9.75, py: 0.31 }
-
       // 2L
       positions[200] = { px: 2.12, pz: -9.75, py: 1.2 }
       positions[201] = { px: 10.4, pz: -9.75, py: 1.2 }
@@ -433,7 +432,6 @@ export default {
       positions[306] = { px: 2.12, pz: -2, py: 1.98 }
       positions[307] = { px: 2.12, pz: -9.75, py: 1.98 }
       positions[308] = { px: 2.12, pz: -9.75, py: 1.98 }
-
       // 4L
       positions[400] = { px: 2.12, pz: -9.75, py: 2.87 }
       positions[401] = { px: 10.4, pz: -9.75, py: 2.87 }
@@ -466,11 +464,11 @@ export default {
       positions[608] = { px: 2.12, pz: -9.75, py: 4.57 }
       for (let i = 1; i <= 6; ++i) {
         for (let j = 0; j <= 8; j++) {
-          let times = 20
+          let times = 2
           if (j % 2 !== 0) {
-            times = 20
+            times = 1
           }
-          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[(j + 1) % 9 === 0 ? i * 100 + j - 8 : i * 100 + j + 1], 500 * times)
+          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[(j + 1) % 9 === 0 ? i * 100 + j - 8 : i * 100 + j + 1], 5000 * times)
             .onUpdate(function (object) {
               camera.position.x = object.px
               camera.position.z = object.pz
@@ -561,13 +559,13 @@ export default {
                     camera.lookAt(2.12, 4.57, -9.75)
                 }
               } else if (camera.position.z === positions[100 * i].pz && camera.position.x === positions[100 * i].px && camera.position.y === positions[100 * i].py) {
-                camera.rotateY(-0.008)
+                camera.rotateY(-0.016)
               } else if (camera.position.z === [100 * i + 1].pz && camera.position.x === positions[100 * i + 1].px && camera.position.y === positions[100 * i + 1].py) {
-                camera.rotateY(-0.008)
+                camera.rotateY(-0.016)
               } else if (camera.position.z === positions[100 * i + 3].pz && camera.position.x === positions[100 * i + 3].px && camera.position.y === positions[100 * i + 3].py) {
-                camera.rotateY(-0.008)
+                camera.rotateY(0.016)
               } else if (camera.position.z === positions[100 * i + 5].pz && camera.position.x === positions[100 * i + 5].px && camera.position.y === positions[100 * i + 5].py) {
-                camera.rotateY(-0.008)
+                camera.rotateY(-0.016)
               }
             })
           tweens[i * 100 + j].easing(TWEEN.Easing.Quadratic.Out)
@@ -616,7 +614,6 @@ export default {
   right: 0;
   width: 80%;
 }
-
 el-aside {
   position: absolute;
   left: 0;

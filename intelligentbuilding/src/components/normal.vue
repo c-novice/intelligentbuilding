@@ -283,4 +283,7 @@ export default {
 </script>
 
 <style>
+#container {
+  top: 20%;
+}
 </style>
