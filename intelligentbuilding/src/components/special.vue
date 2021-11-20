@@ -475,10 +475,15 @@ export default {
               camera.position.x = object.px
               camera.position.z = object.pz
               camera.position.y = object.py
-              if (camera.position.x > positions[100 * i][0] && camera.position.x < positions[100 * i + 1][0] && camera.position.z === positions[100 * i][1]) {
+              for (let m = 0; m <= 8; ++m) {
+                console.log(Math.floor(positions[100 * i + m].px * 100))
+                positions[100 * i + m].px = Math.floor(positions[100 * i + m].px * 100) / 100.0
+              }
+              if (camera.position.x > positions[100 * i].px && camera.position.x < positions[100 * i + 1].px && camera.position.z === positions[100 * i].pz) {
                 switch (i) {
                   case 1:
                     camera.lookAt(10.4, 0.31, -9.75)
+                    console.log(11111111111)
                     break
                   case 2:
                     camera.lookAt(10.4, 1.2, -9.75)
@@ -495,7 +500,7 @@ export default {
                   case 6:
                     camera.lookAt(10.4, 4.57, -9.75)
                 }
-              } else if (camera.position.z > positions[100 * i + 1][1] && camera.position.z < positions[100 * i + 3][1] && camera.position.x === positions[100 * i + 3][0]) {
+              } else if (camera.position.z > positions[100 * i + 1].pz && camera.position.z < positions[100 * i + 3].pz && camera.position.x === positions[100 * i + 3].px) {
                 switch (i) {
                   case 1:
                     camera.lookAt(10.4, 0.31, -2)
@@ -515,7 +520,7 @@ export default {
                   case 6:
                     camera.lookAt(10.4, 4.57, -2)
                 }
-              } else if (camera.position.x > positions[100 * i + 5][0] && camera.position.x < positions[100 * i + 3][0] && camera.position.z === positions[100 * i + 5][1]) {
+              } else if (camera.position.x > positions[100 * i + 5].px && camera.position.x < positions[100 * i + 3].px && camera.position.z === positions[100 * i + 5].pz) {
                 switch (i) {
                   case 1:
                     camera.lookAt(2.12, 0.31, -2)
@@ -535,7 +540,7 @@ export default {
                   case 6:
                     camera.lookAt(2.12, 4.57, -2)
                 }
-              } else if (camera.position.z > positions[100 * i][1] && camera.position.z < positions[100 * i + 5][1] && camera.position.x === positions[100 * i][1]) {
+              } else if (camera.position.z > positions[100 * i].pz && camera.position.z < positions[100 * i + 5].pz && camera.position.x === positions[100 * i].pz) {
                 switch (i) {
                   case 1:
                     camera.lookAt(2.12, 0.31, -9.75)
@@ -555,13 +560,13 @@ export default {
                   case 6:
                     camera.lookAt(2.12, 4.57, -9.75)
                 }
-              } else if (camera.position.z === positions[100 * i][1] && camera.position.x === positions[100 * i][0] && camera.position.y === positions[100 * i][2]) {
+              } else if (camera.position.z === positions[100 * i].pz && camera.position.x === positions[100 * i].px && camera.position.y === positions[100 * i].py) {
                 camera.rotateY(-0.008)
-              } else if (camera.position.z === [100 * i + 1][1] && camera.position.x === positions[100 * i + 1][0] && camera.position.y === positions[100 * i + 1][2]) {
+              } else if (camera.position.z === [100 * i + 1].pz && camera.position.x === positions[100 * i + 1].px && camera.position.y === positions[100 * i + 1].py) {
                 camera.rotateY(-0.008)
-              } else if (camera.position.z === positions[100 * i + 3][1] && camera.position.x === positions[100 * i + 3][0] && camera.position.y === positions[100 * i + 3][2]) {
+              } else if (camera.position.z === positions[100 * i + 3].pz && camera.position.x === positions[100 * i + 3].px && camera.position.y === positions[100 * i + 3].py) {
                 camera.rotateY(-0.008)
-              } else if (camera.position.z === positions[100 * i + 5][1] && camera.position.x === positions[100 * i + 5][0] && camera.position.y === positions[100 * i + 5][2]) {
+              } else if (camera.position.z === positions[100 * i + 5].pz && camera.position.x === positions[100 * i + 5].px && camera.position.y === positions[100 * i + 5].py) {
                 camera.rotateY(-0.008)
               }
             })
