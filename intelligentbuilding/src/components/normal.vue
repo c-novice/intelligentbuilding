@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      <el-page-header content="XL">
+      <el-page-header @back="goBack">
       </el-page-header>
     </el-header>
     <el-aside>
@@ -34,7 +34,12 @@ let positions = new Array(1000)
 export default {
   data () {
     return {
-      cur: null
+      cur: null,
+      // 漫游与巡视按钮
+      ableRoaming: true,
+      switchRoaming: false,
+      ablePatrol: true,
+      switchPatrol: false
     }
   },
   mounted () {
@@ -43,6 +48,107 @@ export default {
     this.animate()
   },
   methods: {
+    // 漫游
+    roamingChange (state) {
+      this.switchRoaming = !!this.switchRoaming
+      if (state) { // 执行漫游
+        // 设置禁用关系
+        this.ablePatrol = false
+        this.ableTree = true
+        // 获取当前的选中楼层
+        let checked = this.cur
+        // 执行漫游
+        if (checked === null) console.assert('roaming bug')
+        else {
+          tweens[checked % 10 * 10].start()
+          this.$message.success('您已进入漫游模式')
+          // 监控鼠标单击
+          let cur = 1
+          document.onclick = () => {
+            if (this.switchRoaming) {
+              cur = (cur + 1) % 2
+              if (cur === 0) {
+                // 提示进入漫游
+                tweens[checked % 10 * 10].start()
+              } else if (cur === 1) {
+                let count = 0
+                let myVar = setInterval(() => {
+                  count++
+                  if (count === 4) {
+                    tweens[checked % 10 * 10].start()
+                    clearInterval(myVar)
+                    cur = 0
+                  }
+                }, 1000)
+                for (let i = 0; i < 70; ++i) {
+                  if (tweens[i] != null) tweens[i].stop()
+                }
+              }
+            }
+          }
+        }
+      } else { // 停止漫游
+        this.$message.success('您已退出漫游模式')
+        // 解除禁用关系
+        this.ablePatrol = true
+        this.ableTree = false
+        for (let i = 0; i < 70; ++i) {
+          if (tweens[i] != null) tweens[i].stop()
+        }
+      }
+    },
+    // 巡视
+    patrolChange (state) {
+      this.switchPatrol = !!this.switchPatrol
+      if (state) { // 执行巡视
+        // 设置禁用关系
+        this.ableRoaming = false
+        this.ableTree = true
+        // 获取当前的选中楼层
+        let checked = this.cur
+        // 执行巡视
+        if (checked === null) console.assert('patrol bug')
+        else {
+          tweens[checked % 10 * 100].start()
+          // 监控鼠标单击
+          let cur = 1
+          document.onclick = () => {
+            if (this.switchPatrol) {
+              cur = (cur + 1) % 2
+              if (cur === 0) {
+                // 提示进入巡视
+                this.$message.success('您已进入巡视模式，点击触摸屏会暂停15s')
+                tweens[checked % 10 * 100].start()
+              } else if (cur === 1) {
+                let count = 0
+                let myVar = setInterval(() => {
+                  count++
+                  if (count === 4) {
+                    tweens[checked % 10 * 100].start()
+                    clearInterval(myVar)
+                    cur = 0
+                  }
+                }, 1000)
+                for (let i = 100; i < 700; ++i) {
+                  if (tweens[i] != null) tweens[i].stop()
+                }
+              }
+            }
+          }
+        }
+      } else { // 停止巡视
+        this.$message.success('您已退出巡视模式')
+        // 解除禁用关系
+        this.ableRoaming = true
+        this.ableTree = false
+        for (let i = 100; i < 700; ++i) {
+          if (tweens[i] != null) tweens[i].stop()
+        }
+      }
+    },
+    goBack () {
+      this.$router.push({ name: 'home' })
+    },
     // 初始化
     init () {
       // 创建场景对象Scene
@@ -163,83 +269,169 @@ export default {
       }
       // 巡视数据
       // 1L
-      positions[100] = { px: 2.12, py: 0.31, pz: -9.75 }
+      positions[100] = { px: 2.12, pz: -9.75, py: 0.31 }
       positions[101] = { px: 10.4, pz: -9.75, py: 0.31 }
-      positions[102] = { px: 10.4, pz: -2, py: 0.31 }
-      positions[103] = { px: 2.12, pz: -2, py: 0.31 }
-      positions[104] = { px: 2.12, pz: -2, py: 0.31 }
+      positions[102] = { px: 10.4, pz: -9.75, py: 0.31 }
+      positions[103] = { px: 10.4, pz: -2, py: 0.31 }
+      positions[104] = { px: 10.4, pz: -2, py: 0.31 }
+      positions[105] = { px: 2.12, pz: -2, py: 0.31 }
+      positions[106] = { px: 2.12, pz: -2, py: 0.31 }
+      positions[107] = { px: 2.12, pz: -9.75, py: 0.31 }
+      positions[108] = { px: 2.12, pz: -9.75, py: 0.31 }
       // 2L
-      positions[200] = { px: 2.12, py: 1.2, pz: -9.75 }
+      positions[200] = { px: 2.12, pz: -9.75, py: 1.2 }
       positions[201] = { px: 10.4, pz: -9.75, py: 1.2 }
-      positions[202] = { px: 10.4, pz: -2, py: 1.2 }
-      positions[203] = { px: 2.12, pz: -2, py: 1.2 }
-      positions[204] = { px: 2.12, pz: -2, py: 1.2 }
+      positions[202] = { px: 10.4, pz: -9.75, py: 1.2 }
+      positions[203] = { px: 10.4, pz: -2, py: 1.2 }
+      positions[204] = { px: 10.4, pz: -2, py: 1.2 }
+      positions[205] = { px: 2.12, pz: -2, py: 1.2 }
+      positions[206] = { px: 2.12, pz: -2, py: 1.2 }
+      positions[207] = { px: 2.12, pz: -9.75, py: 1.2 }
+      positions[208] = { px: 2.12, pz: -9.75, py: 1.2 }
       // 3L
-      positions[300] = { px: 2.12, py: 1.98, pz: -9.75 }
+      positions[300] = { px: 2.12, pz: -9.75, py: 1.98 }
       positions[301] = { px: 10.4, pz: -9.75, py: 1.98 }
-      positions[302] = { px: 10.4, pz: -2, py: 1.98 }
-      positions[303] = { px: 2.12, pz: -2, py: 1.98 }
-      positions[304] = { px: 2.12, pz: -2, py: 1.98 }
+      positions[302] = { px: 10.4, pz: -9.75, py: 1.98 }
+      positions[303] = { px: 10.4, pz: -2, py: 1.98 }
+      positions[304] = { px: 10.4, pz: -2, py: 1.98 }
+      positions[305] = { px: 2.12, pz: -2, py: 1.98 }
+      positions[306] = { px: 2.12, pz: -2, py: 1.98 }
+      positions[307] = { px: 2.12, pz: -9.75, py: 1.98 }
+      positions[308] = { px: 2.12, pz: -9.75, py: 1.98 }
       // 4L
-      positions[400] = { px: 2.12, py: 2.87, pz: -9.75 }
+      positions[400] = { px: 2.12, pz: -9.75, py: 2.87 }
       positions[401] = { px: 10.4, pz: -9.75, py: 2.87 }
-      positions[402] = { px: 10.4, pz: -2, py: 2.87 }
-      positions[403] = { px: 2.12, pz: -2, py: 2.87 }
-      positions[404] = { px: 2.12, pz: -2, py: 2.87 }
+      positions[402] = { px: 10.4, pz: -9.75, py: 2.87 }
+      positions[403] = { px: 10.4, pz: -2, py: 2.87 }
+      positions[404] = { px: 10.4, pz: -2, py: 2.87 }
+      positions[405] = { px: 2.12, pz: -2, py: 2.87 }
+      positions[406] = { px: 2.12, pz: -2, py: 2.87 }
+      positions[407] = { px: 2.12, pz: -9.75, py: 2.87 }
+      positions[408] = { px: 2.12, pz: -9.75, py: 2.87 }
       // 5L
-      positions[500] = { px: 2.12, py: 3.77, pz: -9.75 }
+      positions[500] = { px: 2.12, pz: -9.75, py: 3.77 }
       positions[501] = { px: 10.4, pz: -9.75, py: 3.77 }
-      positions[502] = { px: 10.4, pz: -2, py: 3.77 }
-      positions[503] = { px: 2.12, pz: -2, py: 3.77 }
-      positions[504] = { px: 2.12, pz: -2, py: 3.77 }
+      positions[502] = { px: 10.4, pz: -9.75, py: 3.77 }
+      positions[503] = { px: 10.4, pz: -2, py: 3.77 }
+      positions[504] = { px: 10.4, pz: -2, py: 3.77 }
+      positions[505] = { px: 2.12, pz: -2, py: 3.77 }
+      positions[506] = { px: 2.12, pz: -2, py: 3.77 }
+      positions[507] = { px: 2.12, pz: -9.75, py: 3.77 }
+      positions[508] = { px: 2.12, pz: -9.75, py: 3.77 }
       // 6L
-      positions[600] = { px: 2.12, py: 4.57, pz: -9.75 }
+      positions[600] = { px: 2.12, pz: -9.75, py: 4.57 }
       positions[601] = { px: 10.4, pz: -9.75, py: 4.57 }
-      positions[602] = { px: 10.4, pz: -2, py: 4.57 }
-      positions[603] = { px: 2.12, pz: -2, py: 4.57 }
-      positions[604] = { px: 2.12, pz: -2, py: 4.57 }
+      positions[602] = { px: 10.4, pz: -9.75, py: 4.57 }
+      positions[603] = { px: 10.4, pz: -2, py: 4.57 }
+      positions[604] = { px: 10.4, pz: -2, py: 4.57 }
+      positions[605] = { px: 2.12, pz: -2, py: 4.57 }
+      positions[606] = { px: 2.12, pz: -2, py: 4.57 }
+      positions[607] = { px: 2.12, pz: -9.75, py: 4.57 }
+      positions[608] = { px: 2.12, pz: -9.75, py: 4.57 }
       for (let i = 1; i <= 6; ++i) {
-        for (let j = 0; j <= 4; j++) {
-          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[(j + 1) % 5 === 0 ? i * 100 + j - 4 : i * 100 + j + 1], 3500)
+        for (let j = 0; j <= 8; j++) {
+          let times = 2
+          if (j % 2 !== 0) {
+            times = 1
+          }
+          tweens[i * 100 + j] = new TWEEN.Tween(positions[i * 100 + j]).to(positions[(j + 1) % 9 === 0 ? i * 100 + j - 8 : i * 100 + j + 1], 5000 * times)
             .onUpdate(function (object) {
               camera.position.x = object.px
               camera.position.z = object.pz
               camera.position.y = object.py
-              if (i === 1) {
-                if (camera.position.x > 2.12 && camera.position.x < 10.4 && camera.position.z === -9.75) {
-                  camera.lookAt(10.4, 0.31, -9.75)
-                } else if (camera.position.z > -9.75 && camera.position.z < -2 && camera.position.x === 10.4) {
-                  camera.lookAt(10.4, 0.31, -2)
-                } else if (camera.position.x > 2.12 && camera.position.x < 10.4 && camera.position.z === -2) {
-                  camera.lookAt(2.12, 0.31, -2)
-                } else if (camera.position.z > -9.75 && camera.position.z < -2 && camera.position.x === 2.12) {
-                  camera.lookAt(2.12, 0.31, -9.75)
+              for (let m = 0; m <= 8; ++m) {
+                console.log(Math.floor(positions[100 * i + m].px * 100))
+                positions[100 * i + m].px = Math.floor(positions[100 * i + m].px * 100) / 100.0
+              }
+              if (camera.position.x > positions[100 * i].px && camera.position.x < positions[100 * i + 1].px && camera.position.z === positions[100 * i].pz) {
+                switch (i) {
+                  case 1:
+                    camera.lookAt(10.4, 0.31, -9.75)
+                    console.log(11111111111)
+                    break
+                  case 2:
+                    camera.lookAt(10.4, 1.2, -9.75)
+                    break
+                  case 3:
+                    camera.lookAt(10.4, 1.98, -9.75)
+                    break
+                  case 4:
+                    camera.lookAt(10.4, 2.87, -9.75)
+                    break
+                  case 5:
+                    camera.lookAt(10.4, 3.77, -9.75)
+                    break
+                  case 6:
+                    camera.lookAt(10.4, 4.57, -9.75)
                 }
-              } else if (i === 2) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 1.2, -9.75)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 1.2, -2)
-                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 1.2, -2)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 1.2, -9.75)
-              } else if (i === 3) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 1.98, -9.75)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 1.98, -2)
-                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 1.98, -2)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 1.98, -9.75)
-              } else if (i === 4) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 2.87, -9.75)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 2.87, -2)
-                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 2.87, -2)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 2.87, -9.75)
-              } else if (i === 5) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 3.77, -9.75)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 3.77, -2)
-                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 3.77, -2)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 3.77, -9.75)
-              } else if (i === 6) {
-                if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -9.75) camera.lookAt(10.4, 4.57, -9.75)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 10.4) camera.lookAt(10.4, 4.57, -2)
-                else if (camera.position.x >= 2.12 && camera.position.x <= 10.4 && camera.position.z === -2) camera.lookAt(2.12, 4.57, -2)
-                else if (camera.position.z >= -9.75 && camera.position.z <= -2 && camera.position.x === 2.12) camera.lookAt(2.12, 4.57, -9.75)
+              } else if (camera.position.z > positions[100 * i + 1].pz && camera.position.z < positions[100 * i + 3].pz && camera.position.x === positions[100 * i + 3].px) {
+                switch (i) {
+                  case 1:
+                    camera.lookAt(10.4, 0.31, -2)
+                    break
+                  case 2:
+                    camera.lookAt(10.4, 1.2, -2)
+                    break
+                  case 3:
+                    camera.lookAt(10.4, 1.98, -2)
+                    break
+                  case 4:
+                    camera.lookAt(10.4, 2.87, -2)
+                    break
+                  case 5:
+                    camera.lookAt(10.4, 3.77, -2)
+                    break
+                  case 6:
+                    camera.lookAt(10.4, 4.57, -2)
+                }
+              } else if (camera.position.x > positions[100 * i + 5].px && camera.position.x < positions[100 * i + 3].px && camera.position.z === positions[100 * i + 5].pz) {
+                switch (i) {
+                  case 1:
+                    camera.lookAt(2.12, 0.31, -2)
+                    break
+                  case 2:
+                    camera.lookAt(2.12, 1.2, -2)
+                    break
+                  case 3:
+                    camera.lookAt(2.12, 1.98, -2)
+                    break
+                  case 4:
+                    camera.lookAt(2.12, 2.87, -2)
+                    break
+                  case 5:
+                    camera.lookAt(2.12, 3.77, -2)
+                    break
+                  case 6:
+                    camera.lookAt(2.12, 4.57, -2)
+                }
+              } else if (camera.position.z > positions[100 * i].pz && camera.position.z < positions[100 * i + 5].pz && camera.position.x === positions[100 * i].pz) {
+                switch (i) {
+                  case 1:
+                    camera.lookAt(2.12, 0.31, -9.75)
+                    break
+                  case 2:
+                    camera.lookAt(2.12, 1.2, -9.75)
+                    break
+                  case 3:
+                    camera.lookAt(2.12, 1.98, -9.75)
+                    break
+                  case 4:
+                    camera.lookAt(2.12, 2.87, -9.75)
+                    break
+                  case 5:
+                    camera.lookAt(2.12, 3.77, -9.75)
+                    break
+                  case 6:
+                    camera.lookAt(2.12, 4.57, -9.75)
+                }
+              } else if (camera.position.z === positions[100 * i].pz && camera.position.x === positions[100 * i].px && camera.position.y === positions[100 * i].py) {
+                camera.rotateY(-0.016)
+              } else if (camera.position.z === [100 * i + 1].pz && camera.position.x === positions[100 * i + 1].px && camera.position.y === positions[100 * i + 1].py) {
+                camera.rotateY(-0.016)
+              } else if (camera.position.z === positions[100 * i + 3].pz && camera.position.x === positions[100 * i + 3].px && camera.position.y === positions[100 * i + 3].py) {
+                camera.rotateY(0.016)
+              } else if (camera.position.z === positions[100 * i + 5].pz && camera.position.x === positions[100 * i + 5].px && camera.position.y === positions[100 * i + 5].py) {
+                camera.rotateY(-0.016)
               }
             })
           tweens[i * 100 + j].easing(TWEEN.Easing.Quadratic.Out)
@@ -247,8 +439,8 @@ export default {
       }
       // 连接
       for (let i = 1; i <= 6; ++i) {
-        for (let j = 0; j <= 4; ++j) {
-          tweens[i * 100 + j].chain(tweens[(j + 1) % 5 === 0 ? i * 100 + j - 4 : i * 100 + j + 1])
+        for (let j = 0; j <= 8; ++j) {
+          tweens[i * 100 + j].chain(tweens[(j + 1) % 9 === 0 ? i * 100 + j - 8 : i * 100 + j + 1])
         }
       }
     },

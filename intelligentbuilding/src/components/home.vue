@@ -1,68 +1,51 @@
 <template>
-  <div class="main" style="margin: 100px 100px">
-    <el-row :gutter="20">
-      <el-col :span="6"  @click.native="switchTo('normal','1')">
-        <div class="grid-content" style="background: aquamarine">
-          1L
-        </div>
+  <div class="main">
+    <el-image style="position: fixed;left: 0;top: 0" :src="require('../assets/logo.png')"></el-image>
+    <el-image class="title" :src="require('../assets/title.png')" style="width: 70%"></el-image>
+    <el-row type="flex" :gutter="24" style="margin-bottom: 20px">
+      <el-col push="3" :span="8" @click.native="switchTo('normal','1')">
+        <el-image style="width: 50%;height: 95%;height: 95%" :src="require('../assets/1L.png')"></el-image>
       </el-col>
-      <el-col :span="6"  @click.native="switchTo('normal','2')">
-        <div class="grid-content" style="background: aqua">
-          2L
-        </div>
+      <el-col :span="8" @click.native="switchTo('normal','2')">
+        <el-image style="width: 50%;height: 95%" :src="require('../assets/2L.png')"></el-image>
       </el-col>
-      <el-col :span="6"  @click.native="switchTo('normal','3')">
-        <div class="grid-content" style="background: aliceblue">
-          3L
-        </div>
-      </el-col>
-      <el-col :span="6"  @click.native="switchTo('normal','4')">
-        <div class="grid-content" style="background: beige">
-          4L
-        </div>
+      <el-col pull="3" :span="8" @click.native="switchTo('normal','3')">
+        <el-image style="width: 50%;height: 95%" :src="require('../assets/3L.png')"></el-image>
       </el-col>
     </el-row>
-    <el-row :gutter="20">
-      <el-col :span="6"  @click.native="switchTo('normal','5')">
-        <div class="grid-content" style="background: burlywood">
-          5L
-        </div>
+
+    <el-row type="flex" :gutter="24" style="margin-bottom: 20px">
+      <el-col push="3" :span="8" @click.native="switchTo('normal','4')">
+        <el-image style="width: 50%;height: 95%" :src="require('../assets/4L.png')"></el-image>
       </el-col>
-      <el-col :span="6"  @click.native="switchTo('normal','6')">
-        <div class="grid-content" style="background: red">
-          6L
-        </div>
+      <el-col  :span="8" @click.native="switchTo('normal','5')">
+        <el-image style="width: 50%;height: 95%" :src="require('../assets/5L.png')"></el-image>
       </el-col>
-      <el-col :span="6">
-        <div class="grid-content" style="background: cornflowerblue">整体</div>
+      <el-col pull="3" :span="8" @click.native="switchTo('normal','6')">
+        <el-image style="width: 50%;height: 95%" :src="require('../assets/6L.png')"></el-image>
       </el-col>
-      <el-col :span="6">
-        <div class="grid-content" style="background: cadetblue">详细</div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="6"  @click.native="switchTo('special')">
-        <div class="grid-content" style="background: darkgray">
-          自由组合
-        </div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content" style="background: darkkhaki"></div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content" style="background: coral"></div>
-      </el-col>
-      <el-col :span="6">
-        <div class="grid-content" style="background: darkturquoise"></div>
-      </el-col>
-    </el-row>
+      </el-row>
+
+    <el-row type="flex" :gutter="24" style="margin-bottom: 20px">
+      <el-col push="3" :span="8" >
+          <el-image style="width: 50%;height: 95%" :src="require('../assets/zhengti.png')"></el-image>
+        </el-col>
+      <el-col :span="8">
+          <el-image style="width: 50%;height: 95%" :src="require('../assets/xiangxi.png')"></el-image>
+        </el-col>
+      <el-col pull="3" :span="8" >
+          <el-image style="width: 50%;height: 95%" :src="require('../assets/shezhi.png')"></el-image>
+        </el-col>
+      </el-row>
   </div>
 </template>
 
 <script>
 export default {
   data () {
-    return {}
+    return {
+      fit: 'none'
+    }
   },
   methods: {
     switchTo (name, cur) {
@@ -73,14 +56,23 @@ export default {
 </script>
 
 <style>
-.grid-content {
-  display: flex;
-  border-radius: 4px;
-  margin: 20px 20px;
-  min-height: 120px;
-  align-items: center;
+
+.main {
   text-align: center;
-  justify-content: center;
+  background: url("../assets/background.jpg");
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-size: 100% 100%;
 }
 
+.title{
+  margin-top: 40px;
+  width: 60%;
+  margin-bottom: 10px;
+}
+
+body {
+  margin: 0;
+}
 </style>
