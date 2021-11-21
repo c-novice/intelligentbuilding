@@ -1,15 +1,13 @@
 <template>
   <el-container>
-    <el-header>
-      <el-page-header @back="goBack">
-      </el-page-header>
+    <el-header class="head" height="35px">
+      <el-image style="height: 65%" :src="require('../assets/返回.png')" @click="goBack"></el-image>
+      <div  @click="goBack" style="margin-right: 20px;margin-left: 5px">返回</div>
+        <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" "
+                   @change="roamingChange"></el-switch>
+        <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" "
+                   @change="patrolChange"></el-switch>
     </el-header>
-    <el-aside>
-      <el-switch v-model="switchRoaming" :disabled="!ableRoaming" active-text="漫游模式" inactive-text=" "
-                 @change="roamingChange"></el-switch>
-      <el-switch v-model="switchPatrol" :disabled="!ablePatrol" active-text="楼层巡视" inactive-text=" "
-                 @change="patrolChange"></el-switch>
-    </el-aside>
     <div id="container"></div>
   </el-container>
 </template>
@@ -42,6 +40,18 @@ export default {
       switchPatrol: false
     }
   },
+  destroyed () {
+    this.ableRoaming = true
+    this.switchRoaming = false
+    this.ablePatrol = true
+    this.switchPatrol = false
+    for (let i = 0; i < 70; ++i) {
+      if (tweens[i] != null) tweens[i].stop()
+    }
+    for (let i = 100; i < 700; ++i) {
+      if (tweens[i] != null) tweens[i].stop()
+    }
+  },
   mounted () {
     this.cur = this.$route.query.cur
     this.init()
@@ -58,31 +68,28 @@ export default {
         // 获取当前的选中楼层
         let checked = this.cur
         // 执行漫游
-        if (checked === null) console.assert('roaming bug')
-        else {
-          tweens[checked % 10 * 10].start()
-          this.$message.success('您已进入漫游模式')
-          // 监控鼠标单击
-          let cur = 1
-          document.onclick = () => {
-            if (this.switchRoaming) {
-              cur = (cur + 1) % 2
-              if (cur === 0) {
-                // 提示进入漫游
-                tweens[checked % 10 * 10].start()
-              } else if (cur === 1) {
-                let count = 0
-                let myVar = setInterval(() => {
-                  count++
-                  if (count === 4) {
-                    tweens[checked % 10 * 10].start()
-                    clearInterval(myVar)
-                    cur = 0
-                  }
-                }, 1000)
-                for (let i = 0; i < 70; ++i) {
-                  if (tweens[i] != null) tweens[i].stop()
+        tweens[checked % 10 * 10].start()
+        this.$message.success('您已进入漫游模式')
+        // 监控鼠标单击
+        let cur = 1
+        document.onclick = () => {
+          if (this.switchRoaming) {
+            cur = (cur + 1) % 2
+            if (cur === 0) {
+              // 提示进入漫游
+              tweens[checked % 10 * 10].start()
+            } else if (cur === 1) {
+              let count = 0
+              let myVar = setInterval(() => {
+                count++
+                if (count === 4) {
+                  tweens[checked % 10 * 10].start()
+                  clearInterval(myVar)
+                  cur = 0
                 }
+              }, 1000)
+              for (let i = 0; i < 70; ++i) {
+                if (tweens[i] != null) tweens[i].stop()
               }
             }
           }
@@ -107,31 +114,28 @@ export default {
         // 获取当前的选中楼层
         let checked = this.cur
         // 执行巡视
-        if (checked === null) console.assert('patrol bug')
-        else {
-          tweens[checked % 10 * 100].start()
-          // 监控鼠标单击
-          let cur = 1
-          document.onclick = () => {
-            if (this.switchPatrol) {
-              cur = (cur + 1) % 2
-              if (cur === 0) {
-                // 提示进入巡视
-                this.$message.success('您已进入巡视模式，点击触摸屏会暂停15s')
-                tweens[checked % 10 * 100].start()
-              } else if (cur === 1) {
-                let count = 0
-                let myVar = setInterval(() => {
-                  count++
-                  if (count === 4) {
-                    tweens[checked % 10 * 100].start()
-                    clearInterval(myVar)
-                    cur = 0
-                  }
-                }, 1000)
-                for (let i = 100; i < 700; ++i) {
-                  if (tweens[i] != null) tweens[i].stop()
+        tweens[checked % 10 * 100].start()
+        // 监控鼠标单击
+        let cur = 1
+        document.onclick = () => {
+          if (this.switchPatrol) {
+            cur = (cur + 1) % 2
+            if (cur === 0) {
+              // 提示进入巡视
+              this.$message.success('您已进入巡视模式，点击触摸屏会暂停15s')
+              tweens[checked % 10 * 100].start()
+            } else if (cur === 1) {
+              let count = 0
+              let myVar = setInterval(() => {
+                count++
+                if (count === 4) {
+                  tweens[checked % 10 * 100].start()
+                  clearInterval(myVar)
+                  cur = 0
                 }
+              }, 1000)
+              for (let i = 100; i < 700; ++i) {
+                if (tweens[i] != null) tweens[i].stop()
               }
             }
           }
@@ -155,9 +159,8 @@ export default {
       this.container = document.getElementById('container')
       this.container.style.height = window.innerHeight + 'px'
       scene = new THREE.Scene()
-      scene.background = new THREE.Color(255, 255, 255)
       // 创建渲染器对象
-      this.renderer = new THREE.WebGLRenderer({ antialias: true })
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
       this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
       this.renderer.setPixelRatio(window.devicePixelRatio)
       this.container.appendChild(this.renderer.domElement)
@@ -194,10 +197,11 @@ export default {
       controls.target.set(5, 0, -10)
       controls.update()
       // 模型加载
-      this.objectLoader('./static/' + this.cur.toString() + '楼墙体/' + this.cur.toString() + '楼墙体.gltf', 'floor', this.cur)
-      this.objectLoader('./static/' + this.cur.toString() + '楼桌椅/' + this.cur.toString() + '楼桌椅.gltf', 'context', this.cur)
-      const axesHelper = new THREE.AxesHelper(200)
-      scene.add(axesHelper)
+      if (this.cur === '6') {
+        this.objectLoader('./static/6L2/6L2.gltf', 'floor', 6)
+      } else {
+        this.objectLoader('./static/' + this.cur.toString() + 'L/' + this.cur.toString() + 'L.gltf', 'floor', this.cur)
+      }
       // 漫游数据
       // 位置
       // 整体
@@ -340,14 +344,12 @@ export default {
               camera.position.z = object.pz
               camera.position.y = object.py
               for (let m = 0; m <= 8; ++m) {
-                console.log(Math.floor(positions[100 * i + m].px * 100))
                 positions[100 * i + m].px = Math.floor(positions[100 * i + m].px * 100) / 100.0
               }
               if (camera.position.x > positions[100 * i].px && camera.position.x < positions[100 * i + 1].px && camera.position.z === positions[100 * i].pz) {
                 switch (i) {
                   case 1:
                     camera.lookAt(10.4, 0.31, -9.75)
-                    console.log(11111111111)
                     break
                   case 2:
                     camera.lookAt(10.4, 1.2, -9.75)
@@ -475,7 +477,13 @@ export default {
 </script>
 
 <style>
-#container {
-  top: 20%;
+body {
+  background-color: rgb(192,201,201);
+}
+
+.head {
+  display: flex;
+  vertical-align:middle;
+  margin-top: 10px;
 }
 </style>
